@@ -3,9 +3,6 @@ TEMPLATE = aux
 
 TOOLCHAIN_INCLUDES = $${QMAKE_INCDIR_EGL} $${INCLUDEPATH} $${QMAKE_INCDIR}
 
-GYPI_CONTENTS += "    ['CC', '$$which($$QMAKE_CC)']," \
-                 "    ['CXX', '$$which($$QMAKE_CXX)']," \
-                 "    ['LD', '$$which($$QMAKE_LINK)'],"
 GYPI_CONTENTS += "  ]," \
                  "  'target_defaults': {" \
                  "    'target_conditions': [" \
