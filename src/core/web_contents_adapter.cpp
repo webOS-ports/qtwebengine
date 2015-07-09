@@ -850,6 +850,13 @@ void WebContentsAdapter::filesSelectedInChooser(const QStringList &fileList, Web
     rvh->FilesSelectedInChooser(toVector<content::FileChooserFileInfo>(files), static_cast<content::FileChooserParams::Mode>(mode));
 }
 
+void WebContentsAdapter::backgroundColorChanged()
+{
+    Q_D(WebContentsAdapter);
+    if (content::RenderWidgetHostView *rwhv = d->webContents->GetRenderWidgetHostView())
+        rwhv->SetBackgroundColor(toSk(d->adapterClient->backgroundColor()));
+}
+
 content::WebContents *WebContentsAdapter::webContents() const
 {
     Q_D(const WebContentsAdapter);

@@ -121,6 +121,7 @@ public:
     void grantMouseLockPermission(bool granted);
 
     void dpiScaleChanged();
+    void backgroundColorChanged();
     QAccessibleInterface *browserAccessible();
     BrowserContextQt* browserContext();
     BrowserContextAdapter* browserContextAdapter();

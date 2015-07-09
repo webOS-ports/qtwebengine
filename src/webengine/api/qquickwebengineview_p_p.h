@@ -134,6 +134,7 @@ public:
     virtual void selectionChanged() Q_DECL_OVERRIDE { }
     virtual QRectF viewportRect() const Q_DECL_OVERRIDE;
     virtual qreal dpiScale() const Q_DECL_OVERRIDE;
+    virtual QColor backgroundColor() const Q_DECL_OVERRIDE;
     virtual void loadStarted(const QUrl &provisionalUrl, bool isErrorPage = false) Q_DECL_OVERRIDE;
     virtual void loadCommitted() Q_DECL_OVERRIDE;
     virtual void loadVisuallyCommitted() Q_DECL_OVERRIDE;
@@ -203,6 +204,7 @@ private:
     QScopedPointer<QtWebEngineCore::UIDelegatesManager> m_uIDelegatesManager;
     QList<QQuickWebEngineScript *> m_userScripts;
     qreal m_dpiScale;
+    QColor m_backgroundColor;
 };
 
 #ifndef QT_NO_ACCESSIBILITY
