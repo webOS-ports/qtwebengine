@@ -113,6 +113,7 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineView : public QQuickItem {
     Q_ENUMS(NewViewDestination);
     Q_ENUMS(Feature);
     Q_ENUMS(JavaScriptConsoleMessageLevel);
+    Q_ENUMS(RenderProcessTerminationStatus);
     Q_FLAGS(FindFlags);
 
 public:
@@ -191,6 +192,14 @@ public:
         ErrorMessageLevel
     };
 
+    // must match WebContentsAdapterClient::RenderProcessTerminationStatus
+    enum RenderProcessTerminationStatus {
+        NormalTerminationStatus = 0,
+        AbnormalTerminationStatus,
+        CrashedTerminationStatus,
+        KilledTerminationStatus
+    };
+
     enum FindFlag {
         FindBackward = 1,
         FindCaseSensitively = 2,
@@ -245,6 +254,7 @@ Q_SIGNALS:
     Q_REVISION(1) void profileChanged();
     Q_REVISION(1) void webChannelChanged();
     Q_REVISION(1) void backgroundColorChanged();
+    Q_REVISION(1) void renderProcessTerminated(RenderProcessTerminationStatus terminationStatus, int exitCode);
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
