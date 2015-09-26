@@ -49,6 +49,8 @@ GYP_CONFIG += \
     use_x11=0 \
     v8_use_snapshot=false \
     want_separate_host_toolset=1 \
+    enable_palmbridge=1 \
+
 
 contains(QT_CONFIG, system-jpeg): GYP_CONFIG += use_system_libjpeg=1
 !contains(QT_CONFIG, pulseaudio): GYP_CONFIG += use_pulseaudio=0
