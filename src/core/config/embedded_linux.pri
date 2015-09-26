@@ -38,3 +38,4 @@ GYP_CONFIG += \
     use_x11=0 \
     v8_use_snapshot=false \
     want_separate_host_toolset=1 \
+    enable_palmbridge=1 \
