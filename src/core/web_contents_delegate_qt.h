@@ -126,7 +126,7 @@ public:
     content::WebContents *OpenURLFromTab(content::WebContents *source, const content::OpenURLParams &params) override;
     void NavigationStateChanged(content::WebContents* source, content::InvalidateTypes changed_flags) override;
     void AddNewContents(content::WebContents *source, std::unique_ptr<content::WebContents> new_contents, const GURL &target_url,
-                        WindowOpenDisposition disposition, const gfx::Rect &initial_pos, bool user_gesture, bool *was_blocked) override;
+                        WindowOpenDisposition disposition, const gfx::Rect &initial_pos, bool user_gesture, bool *was_blocked, std::vector<base::string16> additional_features) override;
     void CloseContents(content::WebContents *source) override;
     void LoadProgressChanged(double progress) override;
     bool HandleKeyboardEvent(content::WebContents *source, const content::NativeWebKeyboardEvent &event) override;
@@ -215,7 +215,8 @@ private:
     createWindow(std::unique_ptr<content::WebContents> new_contents,
                  WindowOpenDisposition disposition, const gfx::Rect &initial_pos,
                  const QUrl &url,
-                 bool user_gesture);
+                 bool user_gesture,
+                 std::vector<base::string16> additional_features);
     void EmitLoadStarted(const QUrl &url, bool isErrorPage = false);
     void EmitLoadFinished(bool success, const QUrl &url, bool isErrorPage = false, int errorCode = 0, const QString &errorDescription = QString(), bool triggersErrorPage = false);
     void EmitLoadCommitted();
