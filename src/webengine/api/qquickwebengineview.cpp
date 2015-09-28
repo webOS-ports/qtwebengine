@@ -551,7 +551,7 @@ void QQuickWebEngineViewPrivate::unhandledKeyEvent(QKeyEvent *event)
 QSharedPointer<WebContentsAdapter>
 QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents,
                                            WindowOpenDisposition disposition, bool userGesture,
-                                           const QRect &, const QUrl &targetUrl)
+                                           const QRect &, const QUrl &targetUrl, const QStringList &additionalFeaturesStringList)
 {
     Q_Q(QQuickWebEngineView);
     Q_ASSERT(newWebContents);
@@ -559,6 +559,7 @@ QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> ne
     request.m_adapter = newWebContents;
     request.m_isUserInitiated = userGesture;
     request.m_requestedUrl = targetUrl;
+    request.m_additionalFeatures = additionalFeaturesStringList;
 
     switch (disposition) {
     case WebContentsAdapterClient::NewForegroundTabDisposition:
