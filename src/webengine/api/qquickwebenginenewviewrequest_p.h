@@ -51,6 +51,8 @@
 #include "qtwebengineglobal_p.h"
 #include "qquickwebengineview_p.h"
 
+#include <QStringList>
+
 namespace QtWebEngineCore {
 class WebContentsAdapter;
 }
@@ -61,11 +63,13 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineNewViewRequest : public QObject 
     Q_OBJECT
     Q_PROPERTY(QQuickWebEngineView::NewViewDestination destination READ destination CONSTANT FINAL)
     Q_PROPERTY(bool userInitiated READ isUserInitiated CONSTANT FINAL)
+    Q_PROPERTY(QStringList additionalFeatures READ additionalFeatures CONSTANT FINAL)
 public:
     ~QQuickWebEngineNewViewRequest();
 
     QQuickWebEngineView::NewViewDestination destination() const;
     bool isUserInitiated() const;
+    const QStringList &additionalFeatures() const;
     Q_INVOKABLE void openIn(QQuickWebEngineView *view);
 
 private:
@@ -75,6 +79,7 @@ private:
     QSharedPointer<QtWebEngineCore::WebContentsAdapter> m_adapter;
     QUrl m_requestedUrl;
     friend class QQuickWebEngineView;
+    QStringList m_additionalFeatures;
     friend class QQuickWebEngineViewPrivate;
 };
 
