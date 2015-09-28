@@ -294,10 +294,11 @@ void QWebEnginePagePrivate::unhandledKeyEvent(QKeyEvent *event)
         QGuiApplication::sendEvent(view->parentWidget(), event);
 }
 
-void QWebEnginePagePrivate::adoptNewWindow(WebContentsAdapter *newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &initialGeometry)
+void QWebEnginePagePrivate::adoptNewWindow(WebContentsAdapter *newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &initialGeometry, const QStringList &additionalFeatures)
 {
     Q_Q(QWebEnginePage);
     Q_UNUSED(userGesture);
+    Q_UNUSED(additionalFeatures);
     QWebEnginePage *newPage = q->createWindow(toWindowType(disposition));
     // Overwrite the new page's WebContents with ours.
     if (newPage && newPage->d_func() != this) {

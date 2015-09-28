@@ -87,7 +87,8 @@ content::WebContents *WebContentsDelegateQt::OpenURLFromTab(content::WebContents
 {
     content::WebContents *target = source;
     if (params.disposition != CURRENT_TAB) {
-        WebContentsAdapter *targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture);
+        std::vector<base::string16> additional_features;
+        WebContentsAdapter *targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture, additional_features);
         if (targetAdapter)
             target = targetAdapter->webContents();
     }
@@ -115,10 +116,10 @@ void WebContentsDelegateQt::NavigationStateChanged(const content::WebContents* s
         m_viewClient->titleChanged(toQt(source->GetTitle()));
 }
 
-void WebContentsDelegateQt::AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked)
+void WebContentsDelegateQt::AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked, std::vector<base::string16> additional_features)
 {
     Q_UNUSED(source)
-    WebContentsAdapter *newAdapter = createWindow(new_contents, disposition, initial_pos, user_gesture);
+    WebContentsAdapter *newAdapter = createWindow(new_contents, disposition, initial_pos, user_gesture, additional_features);
     if (was_blocked)
         *was_blocked = !newAdapter;
 }
@@ -317,13 +318,19 @@ void WebContentsDelegateQt::overrideWebPreferences(content::WebContents *, conte
     m_viewClient->webEngineSettings()->overrideWebPreferences(webPreferences);
 }
 
-WebContentsAdapter *WebContentsDelegateQt::createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture)
+WebContentsAdapter *WebContentsDelegateQt::createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, std::vector<base::string16> additional_features)
 {
     WebContentsAdapter *newAdapter = new WebContentsAdapter(new_contents);
     // Do the first ref-count manually to be able to know if the application is handling adoptNewWindow through the public API.
     newAdapter->ref.ref();
 
-    m_viewClient->adoptNewWindow(newAdapter, static_cast<WebContentsAdapterClient::WindowOpenDisposition>(disposition), user_gesture, toQt(initial_pos));
+    QStringList additionalFeaturesStringList;
+    std::vector<base::string16>::const_iterator iter;
+    for( iter = additional_features.begin(); iter != additional_features.end(); iter++ )
+    {
+        additionalFeaturesStringList << toQt(*iter);
+    }
+    m_viewClient->adoptNewWindow(newAdapter, static_cast<WebContentsAdapterClient::WindowOpenDisposition>(disposition), user_gesture, toQt(initial_pos), additionalFeaturesStringList);
 
     if (!newAdapter->ref.deref()) {
         // adoptNewWindow didn't increase the ref-count, newAdapter and its new_contents (if non-null) need to be discarded.
