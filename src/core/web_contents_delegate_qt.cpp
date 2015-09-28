@@ -120,7 +120,8 @@ content::WebContents *WebContentsDelegateQt::OpenURLFromTab(content::WebContents
     content::SiteInstance *target_site_instance = params.source_site_instance.get();
     content::Referrer referrer = params.referrer;
     if (params.disposition != WindowOpenDisposition::CURRENT_TAB) {
-        QSharedPointer<WebContentsAdapter> targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture);
+        std::vector<base::string16> additional_features;
+        QSharedPointer<WebContentsAdapter> targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture, additional_features);
         if (targetAdapter) {
             if (targetAdapter->browserContext() != source->GetBrowserContext()) {
                 target_site_instance = nullptr;
@@ -219,10 +220,10 @@ void WebContentsDelegateQt::NavigationStateChanged(content::WebContents* source,
     }
 }
 
-void WebContentsDelegateQt::AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked)
+void WebContentsDelegateQt::AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked, std::vector<base::string16> additional_features)
 {
     Q_UNUSED(source)
-    QSharedPointer<WebContentsAdapter> newAdapter = createWindow(new_contents, disposition, initial_pos, user_gesture);
+    QSharedPointer<WebContentsAdapter> newAdapter = createWindow(new_contents, disposition, initial_pos, user_gesture, additional_features);
     if (newAdapter && !newAdapter->isInitialized())
         newAdapter->loadDefault();
     if (was_blocked)
@@ -542,11 +543,17 @@ void WebContentsDelegateQt::overrideWebPreferences(content::WebContents *webCont
     m_viewClient->webEngineSettings()->overrideWebPreferences(webContents, webPreferences);
 }
 
-QWeakPointer<WebContentsAdapter> WebContentsDelegateQt::createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture)
+QWeakPointer<WebContentsAdapter> WebContentsDelegateQt::createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, std::vector<base::string16> additional_features)
 {
     QSharedPointer<WebContentsAdapter> newAdapter = QSharedPointer<WebContentsAdapter>::create(new_contents);
 
-    m_viewClient->adoptNewWindow(newAdapter, static_cast<WebContentsAdapterClient::WindowOpenDisposition>(disposition), user_gesture, toQt(initial_pos), m_initialTargetUrl);
+    QStringList additionalFeaturesStringList;
+    std::vector<base::string16>::const_iterator iter;
+    for( iter = additional_features.begin(); iter != additional_features.end(); iter++ )
+    {
+        additionalFeaturesStringList << toQt(*iter);
+    }
+    m_viewClient->adoptNewWindow(newAdapter, static_cast<WebContentsAdapterClient::WindowOpenDisposition>(disposition), user_gesture, toQt(initial_pos), m_initialTargetUrl, additionalFeaturesStringList);
 
     // If the client didn't reference the adapter, it will be deleted now, and the weak pointer zeroed.
     return newAdapter;
