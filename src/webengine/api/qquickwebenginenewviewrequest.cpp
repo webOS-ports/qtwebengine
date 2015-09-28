@@ -82,6 +82,11 @@ bool QQuickWebEngineNewViewRequest::isUserInitiated() const
     return m_isUserInitiated;
 }
 
+const QStringList &QQuickWebEngineNewViewRequest::additionalFeatures() const
+{
+    return m_additionalFeatures;
+}
+
 /*!
     \qmlmethod WebEngineNewViewRequest::openIn(WebEngineView view)
 
