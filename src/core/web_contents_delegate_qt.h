@@ -74,7 +74,7 @@ public:
     // WebContentsDelegate overrides
     virtual content::WebContents *OpenURLFromTab(content::WebContents *source, const content::OpenURLParams &params) Q_DECL_OVERRIDE;
     virtual void NavigationStateChanged(content::WebContents* source, content::InvalidateTypes changed_flags) Q_DECL_OVERRIDE;
-    virtual void AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked) Q_DECL_OVERRIDE;
+    virtual void AddNewContents(content::WebContents* source, content::WebContents* new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked, std::vector<base::string16> additional_features) Q_DECL_OVERRIDE;
     virtual void CloseContents(content::WebContents *source) Q_DECL_OVERRIDE;
     virtual void LoadProgressChanged(content::WebContents* source, double progress) Q_DECL_OVERRIDE;
     virtual void HandleKeyboardEvent(content::WebContents *source, const content::NativeWebKeyboardEvent &event) Q_DECL_OVERRIDE;
@@ -112,7 +112,7 @@ public:
     void launchExternalURL(const QUrl &url, ui::PageTransition page_transition, bool is_main_frame);
 
 private:
-    WebContentsAdapter *createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture);
+    WebContentsAdapter *createWindow(content::WebContents *new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, std::vector<base::string16> additional_features);
 
     WebContentsAdapterClient *m_viewClient;
     QString m_lastSearchedString;
