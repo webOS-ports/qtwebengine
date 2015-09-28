@@ -103,7 +103,7 @@ public:
     // WebContentsDelegate overrides
     content::WebContents *OpenURLFromTab(content::WebContents *source, const content::OpenURLParams &params) override;
     void NavigationStateChanged(content::WebContents* source, content::InvalidateTypes changed_flags) override;
-    void AddNewContents(content::WebContents *source, std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect &initial_pos, bool user_gesture, bool *was_blocked) override;
+    void AddNewContents(content::WebContents *source, std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect &initial_pos, bool user_gesture, bool *was_blocked, std::vector<base::string16> additional_features) override;
     void CloseContents(content::WebContents *source) override;
     void LoadProgressChanged(content::WebContents* source, double progress) override;
     void HandleKeyboardEvent(content::WebContents *source, const content::NativeWebKeyboardEvent &event) override;
@@ -158,7 +158,7 @@ public:
     WebContentsAdapterClient *adapterClient() const { return m_viewClient; }
 
 private:
-    QWeakPointer<WebContentsAdapter> createWindow(std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture);
+    QWeakPointer<WebContentsAdapter> createWindow(std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, std::vector<base::string16> additional_features);
     void EmitLoadStarted(const QUrl &url, bool isErrorPage = false);
     void EmitLoadFinished(bool success, const QUrl &url, bool isErrorPage = false, int errorCode = 0, const QString &errorDescription = QString());
     void EmitLoadCommitted();
