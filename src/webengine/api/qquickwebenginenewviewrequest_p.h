@@ -53,6 +53,7 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineNewViewRequest : public QObject 
     Q_PROPERTY(QQuickWebEngineView::NewViewDestination destination READ destination CONSTANT FINAL)
     Q_PROPERTY(bool userInitiated READ isUserInitiated CONSTANT FINAL)
     Q_PROPERTY(QStringList additionalFeatures READ additionalFeatures CONSTANT FINAL)
+    Q_PROPERTY(QUrl url READ url)
 public:
     ~QQuickWebEngineNewViewRequest();
 
@@ -60,6 +61,7 @@ public:
     bool isUserInitiated() const;
     const QStringList &additionalFeatures() const;
     Q_INVOKABLE void openIn(QQuickWebEngineView *view);
+    QUrl url() const;
 
 private:
     QQuickWebEngineNewViewRequest();

@@ -84,6 +84,14 @@ const QStringList &QQuickWebEngineNewViewRequest::additionalFeatures() const
     return m_additionalFeatures;
 }
 
+QUrl QQuickWebEngineNewViewRequest::url() const
+{
+    if (!m_adapter) {
+        return m_adapter->activeUrl();
+    }
+    return QUrl();
+}
+
 /*!
     \qmlmethod WebEngineNewViewRequest::openIn(WebEngineView view)
 
