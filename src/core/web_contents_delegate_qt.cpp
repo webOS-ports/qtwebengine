@@ -127,7 +127,8 @@ content::WebContents *WebContentsDelegateQt::OpenURLFromTab(content::WebContents
     content::SiteInstance *target_site_instance = params.source_site_instance.get();
     content::Referrer referrer = params.referrer;
     if (params.disposition != WindowOpenDisposition::CURRENT_TAB) {
-        QSharedPointer<WebContentsAdapter> targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture);
+        std::vector<base::string16> additional_features;
+        QSharedPointer<WebContentsAdapter> targetAdapter = createWindow(0, params.disposition, gfx::Rect(), params.user_gesture, additional_features);
         if (targetAdapter) {
             if (targetAdapter->profile() != source->GetBrowserContext()) {
                 target_site_instance = nullptr;
@@ -234,10 +235,11 @@ QUrl WebContentsDelegateQt::url(content::WebContents* source) const {
     m_pendingUrlUpdate = false;
     return newUrl;
 }
-void WebContentsDelegateQt::AddNewContents(content::WebContents* source, std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked)
+
+void WebContentsDelegateQt::AddNewContents(content::WebContents* source, std::unique_ptr<content::WebContents> new_contents, WindowOpenDisposition disposition, const gfx::Rect& initial_pos, bool user_gesture, bool* was_blocked, std::vector<base::string16> additional_features)
 {
     Q_UNUSED(source)
-    QSharedPointer<WebContentsAdapter> newAdapter = createWindow(std::move(new_contents), disposition, initial_pos, user_gesture);
+    QSharedPointer<WebContentsAdapter> newAdapter = createWindow(std::move(new_contents), disposition, initial_pos, user_gesture, additional_features);
     // Chromium can forget to pass user-agent override settings to new windows (see QTBUG-61774 and QTBUG-76249),
     // so set it here. Note the actual value doesn't really matter here. Only the second value does, but we try
     // to give the correct user-agent anyway.
@@ -666,14 +668,21 @@ void WebContentsDelegateQt::overrideWebPreferences(content::WebContents *webCont
 QSharedPointer<WebContentsAdapter>
 WebContentsDelegateQt::createWindow(std::unique_ptr<content::WebContents> new_contents,
                                     WindowOpenDisposition disposition, const gfx::Rect &initial_pos,
-                                    bool user_gesture)
+                                    bool user_gesture, std::vector<base::string16> additional_features)
 {
     QSharedPointer<WebContentsAdapter> newAdapter = QSharedPointer<WebContentsAdapter>::create(std::move(new_contents));
+
+    QStringList additionalFeaturesStringList;
+    std::vector<base::string16>::const_iterator iter;
+    for( iter = additional_features.begin(); iter != additional_features.end(); iter++ )
+    {   
+        additionalFeaturesStringList << toQt(*iter);
+    }
 
     return m_viewClient->adoptNewWindow(
             std::move(newAdapter),
             static_cast<WebContentsAdapterClient::WindowOpenDisposition>(disposition), user_gesture,
-            toQt(initial_pos), m_initialTargetUrl);
+            toQt(initial_pos), m_initialTargetUrl, additionalFeaturesStringList);
 }
 
 void WebContentsDelegateQt::allowCertificateError(const QSharedPointer<CertificateErrorController> &errorController)

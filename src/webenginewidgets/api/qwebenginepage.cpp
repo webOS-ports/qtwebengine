@@ -351,11 +351,13 @@ void QWebEnginePagePrivate::unhandledKeyEvent(QKeyEvent *event)
 QSharedPointer<WebContentsAdapter>
 QWebEnginePagePrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents,
                                       WindowOpenDisposition disposition, bool userGesture,
-                                      const QRect &initialGeometry, const QUrl &targetUrl)
+                                      const QRect &initialGeometry, const QUrl &targetUrl,
+                                      const QStringList &additionalFeatures)
 {
     Q_Q(QWebEnginePage);
     Q_UNUSED(userGesture);
     Q_UNUSED(targetUrl);
+    Q_UNUSED(additionalFeatures);
 
     QWebEnginePage *newPage = q->createWindow(toWindowType(disposition));
     if (!newPage)
