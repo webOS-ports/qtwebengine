@@ -472,7 +472,8 @@ public:
     virtual QSharedPointer<WebContentsAdapter>
     adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents,
                    WindowOpenDisposition disposition, bool userGesture,
-                   const QRect &initialGeometry, const QUrl &targetUrl) = 0;
+                   const QRect &initialGeometry, const QUrl &targetUrl,
+                   const QStringList &additionalFeatures) = 0;
     virtual bool isBeingAdopted() = 0;
     virtual void close() = 0;
     virtual void windowCloseRejected() = 0;
