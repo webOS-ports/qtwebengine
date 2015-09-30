@@ -75,6 +75,9 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineSettings : public QObject {
     // FIXME(QTBUG-40043): Mark fullScreenSupportEnabled with REVISION 1
     Q_PROPERTY(bool fullScreenSupportEnabled READ fullScreenSupportEnabled WRITE setFullScreenSupportEnabled NOTIFY fullScreenSupportEnabledChanged)
     Q_PROPERTY(QString defaultTextEncoding READ defaultTextEncoding WRITE setDefaultTextEncoding NOTIFY defaultTextEncodingChanged)
+    Q_PROPERTY(bool palmServiceBridgeEnabled READ palmServiceBridgeEnabled WRITE setPalmServiceBridgeEnabled NOTIFY palmServiceBridgeEnabledChanged)
+    Q_PROPERTY(bool luneOSPrivileged READ luneOSPrivileged WRITE setLuneOSPrivileged NOTIFY luneOSPrivilegedChanged)
+    Q_PROPERTY(QString luneOSIdentifier READ luneOSIdentifier WRITE setLuneOSIdentifier NOTIFY luneOSIdentifierChanged)
 
 public:
     ~QQuickWebEngineSettings();
@@ -93,6 +96,9 @@ public:
     bool pluginsEnabled() const;
     bool fullScreenSupportEnabled() const;
     QString defaultTextEncoding() const;
+    bool palmServiceBridgeEnabled() const;
+    bool luneOSPrivileged() const;
+    QString luneOSIdentifier() const;
 
     void setAutoLoadImages(bool on);
     void setJavascriptEnabled(bool on);
@@ -108,6 +114,9 @@ public:
     void setPluginsEnabled(bool on);
     void setFullScreenSupportEnabled(bool on);
     void setDefaultTextEncoding(QString encoding);
+    void setPalmServiceBridgeEnabled(bool on);
+    void setLuneOSPrivileged(bool on);
+    void setLuneOSIdentifier(QString identifier);
 
 signals:
     void autoLoadImagesChanged();
@@ -125,6 +134,9 @@ signals:
     // FIXME(QTBUG-40043): Mark fullScreenSupportEnabledChanged with Q_REVISION(1)
     void fullScreenSupportEnabledChanged();
     void defaultTextEncodingChanged();
+    void palmServiceBridgeEnabledChanged();
+    void luneOSPrivilegedChanged();
+    void luneOSIdentifierChanged();
 
 private:
     explicit QQuickWebEngineSettings(QQuickWebEngineSettings *parentSettings = 0);
