@@ -61,6 +61,9 @@ public:
 private:
     bool OnMessageReceived(const IPC::Message& message) Q_DECL_OVERRIDE;
     void onWebChannelMessage(const std::vector<char> &message);
+    void onWebChannelMessageSync(const std::vector<char> &message, IPC::Message *reply);
+
+    IPC::Message *_mWaitingReply;
 };
 
 } // namespace
