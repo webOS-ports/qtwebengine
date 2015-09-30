@@ -197,6 +197,19 @@ QString WebEngineSettings::defaultTextEncoding() const
     return m_defaultEncoding.isEmpty()? parentSettings->defaultTextEncoding() : m_defaultEncoding;
 }
 
+void WebEngineSettings::setLuneOSIdentifier(const QString &identifier)
+{
+    m_luneOSIdentifier = identifier;
+    scheduleApplyRecursively();
+}
+
+QString WebEngineSettings::luneOSIdentifier() const
+{
+    if (!parentSettings)
+        return m_luneOSIdentifier;
+    return m_luneOSIdentifier.isEmpty()? parentSettings->luneOSIdentifier() : m_luneOSIdentifier;
+}
+
 void WebEngineSettings::initDefaults(bool offTheRecord)
 {
     // Initialize the default settings.
@@ -213,6 +226,8 @@ void WebEngineSettings::initDefaults(bool offTheRecord)
     m_attributes.insert(HyperlinkAuditingEnabled, false);
     m_attributes.insert(ScrollAnimatorEnabled, false);
     m_attributes.insert(ErrorPageEnabled, true);
+    m_attributes.insert(PalmServiceBridgeEnabled, false);
+    m_attributes.insert(LuneOSPrivileged, false);
 
     // Default fonts
     QFont defaultFont;
@@ -238,6 +253,8 @@ void WebEngineSettings::initDefaults(bool offTheRecord)
     m_fontSizes.insert(DefaultFontSize, 16);
 
     m_defaultEncoding = QStringLiteral("ISO-8859-1");
+
+    m_luneOSIdentifier = "";
 }
 
 void WebEngineSettings::scheduleApply()
@@ -277,6 +294,9 @@ void WebEngineSettings::applySettingsToWebPreferences(content::WebPreferences *p
     prefs->hyperlink_auditing_enabled = testAttribute(HyperlinkAuditingEnabled);
     prefs->enable_scroll_animator = testAttribute(ScrollAnimatorEnabled);
     prefs->enable_error_page = testAttribute(ErrorPageEnabled);
+
+    prefs->luneosPriviledged = testAttribute(LuneOSPrivileged);
+    prefs->luneosAppIdentifier = luneOSIdentifier().toStdString();
 
     // Fonts settings.
     prefs->standard_font_family_map[content::kCommonScript] = toString16(fontFamily(StandardFont));
