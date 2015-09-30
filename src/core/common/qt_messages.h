@@ -76,6 +76,8 @@ IPC_MESSAGE_ROUTED0(RenderViewObserverHostQt_DidFirstVisuallyNonEmptyLayout)
 
 IPC_MESSAGE_ROUTED1(WebChannelIPCTransportHost_SendMessage, std::vector<char> /*binaryJSON*/)
 
+IPC_SYNC_MESSAGE_ROUTED1_1(WebChannelIPCTransportHost_SendMessageSync, std::vector<char> /*binaryJSON*/, std::vector<char> /*binaryJSON*/)
+
 //-----------------------------------------------------------------------------
 // Misc messages
 // These are messages sent from the renderer to the browser process.
