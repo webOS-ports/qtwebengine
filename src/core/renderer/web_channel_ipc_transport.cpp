@@ -60,6 +60,10 @@ static const char kWebChannelTransportApi[] =
         "qt.webChannelTransport.send = function(message) {" \
         "  native function NativeQtSendMessage();" \
         "  NativeQtSendMessage(message);" \
+        "};" \
+        "qt.webChannelTransport.sendSync = function(message) {" \
+        "  native function NativeQtSendMessageSync();" \
+        "  return NativeQtSendMessageSync(message);" \
         "};";
 
 class WebChannelTransportExtension : public v8::Extension {
@@ -91,6 +95,43 @@ public:
         const char *rawData = doc.rawData(&size);
         renderView->Send(new WebChannelIPCTransportHost_SendMessage(renderView->GetRoutingID(), std::vector<char>(rawData, rawData + size)));
     }
+
+    static void NativeQtSendMessageSync(const v8::FunctionCallbackInfo<v8::Value>& args)
+    {
+        content::RenderView *renderView = GetRenderView();
+        if (!renderView || args.Length() != 1)
+            return;
+        v8::Handle<v8::Value> val = args[0];
+        if (!val->IsString() && !val->IsStringObject())
+            return;
+        v8::String::Utf8Value utf8(val->ToString());
+
+        QByteArray valueData(*utf8, utf8.length());
+        QJsonParseError error;
+        QJsonDocument doc = QJsonDocument::fromJson(valueData, &error);
+        if (error.error != QJsonParseError::NoError)
+            qWarning("%s %d: Parsing error: %s",__FILE__, __LINE__, qPrintable(error.errorString()));
+        int size = 0;
+        const char *rawData = doc.rawData(&size);
+
+        std::vector<char> replyData;
+        WebChannelIPCTransportHost_SendMessageSync *message = new WebChannelIPCTransportHost_SendMessageSync(renderView->GetRoutingID(), std::vector<char>(rawData, rawData + size), &replyData);
+        // Enable the UI thread in browser to receive messages.
+        message->EnableMessagePumping();
+        renderView->Send(message);
+
+        QJsonDocument docReply = QJsonDocument::fromRawData(replyData.data(), replyData.size(), QJsonDocument::BypassValidation);
+        Q_ASSERT(docReply.isObject());
+        QByteArray jsonReply = docReply.toJson(QJsonDocument::Compact);
+
+        v8::Isolate *isolate = v8::Isolate::GetCurrent();
+        v8::Handle<v8::Object> replyObject(v8::Object::New(isolate));
+        replyObject->ForceSet(v8::String::NewFromUtf8(isolate, "data")
+                           , v8::String::NewFromUtf8(isolate, jsonReply.constData(), v8::String::kNormalString, jsonReply.size())
+                           , v8::PropertyAttribute(v8::ReadOnly | v8::DontDelete));
+
+        args.GetReturnValue().Set(replyObject);
+    }
 };
 
 content::RenderView *WebChannelTransportExtension::GetRenderView()
@@ -111,6 +152,8 @@ v8::Handle<v8::FunctionTemplate> WebChannelTransportExtension::GetNativeFunction
 {
     if (name->Equals(v8::String::NewFromUtf8(isolate, "NativeQtSendMessage")))
         return v8::FunctionTemplate::New(isolate, NativeQtSendMessage);
+    if (name->Equals(v8::String::NewFromUtf8(isolate, "NativeQtSendMessageSync")))
+        return v8::FunctionTemplate::New(isolate, NativeQtSendMessageSync);
 
     return v8::Handle<v8::FunctionTemplate>();
 }
