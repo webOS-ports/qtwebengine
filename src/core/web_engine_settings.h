@@ -72,6 +72,8 @@ public:
         ErrorPageEnabled,
         PluginsEnabled,
         FullScreenSupportEnabled,
+        PalmServiceBridgeEnabled,
+        LuneOSPrivileged,
     };
 
     // Must match the values from the public API in qwebenginesettings.h.
@@ -114,6 +116,9 @@ public:
     void setDefaultTextEncoding(const QString &encoding);
     QString defaultTextEncoding() const;
 
+    void setLuneOSIdentifier(const QString &identifier);
+    QString luneOSIdentifier() const;
+
     void initDefaults(bool offTheRecord = false);
     void scheduleApply();
 
@@ -129,6 +134,7 @@ private:
     QHash<FontFamily, QString> m_fontFamilies;
     QHash<FontSize, int> m_fontSizes;
     QString m_defaultEncoding;
+    QString m_luneOSIdentifier;
     QScopedPointer<content::WebPreferences> webPreferences;
     QScopedPointer<BatchTimer> m_batchTimer;
 
