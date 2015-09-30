@@ -49,6 +49,7 @@ namespace QtWebEngineCore {
 WebChannelIPCTransportHost::WebChannelIPCTransportHost(content::WebContents *contents, QObject *parent)
     : QWebChannelAbstractTransport(parent)
     , content::WebContentsObserver(contents)
+    ,_mWaitingReply(0)
 {
 }
 
@@ -61,7 +62,15 @@ void WebChannelIPCTransportHost::sendMessage(const QJsonObject &message)
     QJsonDocument doc(message);
     int size = 0;
     const char *rawData = doc.rawData(&size);
-    Send(new WebChannelIPCTransport_Message(routing_id(), std::vector<char>(rawData, rawData + size)));
+
+    if (_mWaitingReply) {
+        WebChannelIPCTransportHost_SendMessageSync::WriteReplyParams(_mWaitingReply, std::vector<char>(rawData, rawData + size));
+        Send(_mWaitingReply);
+        _mWaitingReply = 0;
+    }
+    else {
+        Send(new WebChannelIPCTransport_Message(routing_id(), std::vector<char>(rawData, rawData + size)));
+    }
 }
 
 void WebChannelIPCTransportHost::onWebChannelMessage(const std::vector<char> &message)
@@ -71,11 +80,18 @@ void WebChannelIPCTransportHost::onWebChannelMessage(const std::vector<char> &me
     Q_EMIT messageReceived(doc.object(), this);
 }
 
+void WebChannelIPCTransportHost::onWebChannelMessageSync(const std::vector<char> &message, IPC::Message *reply)
+{
+    _mWaitingReply = reply;
+    onWebChannelMessage(message);
+}
+
 bool WebChannelIPCTransportHost::OnMessageReceived(const IPC::Message &message)
 {
     bool handled = true;
     IPC_BEGIN_MESSAGE_MAP(WebChannelIPCTransportHost, message)
         IPC_MESSAGE_HANDLER(WebChannelIPCTransportHost_SendMessage, onWebChannelMessage)
+        IPC_MESSAGE_HANDLER_DELAY_REPLY(WebChannelIPCTransportHost_SendMessageSync, onWebChannelMessageSync)
         IPC_MESSAGE_UNHANDLED(handled = false)
     IPC_END_MESSAGE_MAP()
     return handled;
