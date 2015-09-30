@@ -70,6 +70,7 @@ inline QDebug operator<<(QDebug stream, const base::Optional<T> &opt)
 WebChannelIPCTransportHost::WebChannelIPCTransportHost(content::WebContents *contents, uint worldId, QObject *parent)
     : QWebChannelAbstractTransport(parent)
     , content::WebContentsObserver(contents)
+    ,_mWaitingReply(0)
 {
     setWorldId(worldId);
 }
@@ -86,7 +87,14 @@ void WebChannelIPCTransportHost::sendMessage(const QJsonObject &message)
     const char *rawData = doc.rawData(&size);
     content::RenderFrameHost *frame = web_contents()->GetMainFrame();
     qCDebug(log).nospace() << "sending webchannel message to " << frame << ": " << doc;
-    frame->Send(new WebChannelIPCTransport_Message(frame->GetRoutingID(), std::vector<char>(rawData, rawData + size), *m_worldId));
+    if (_mWaitingReply) {
+        WebChannelIPCTransportHost_SendMessageSync::WriteReplyParams(_mWaitingReply, std::vector<char>(rawData, rawData + size));
+        frame->Send(_mWaitingReply);
+        _mWaitingReply = 0;
+    }
+    else {
+        frame->Send(new WebChannelIPCTransport_Message(frame->GetRoutingID(), std::vector<char>(rawData, rawData + size), *m_worldId));
+    }
 }
 
 void WebChannelIPCTransportHost::setWorldId(base::Optional<uint> worldId)
@@ -116,9 +124,20 @@ void WebChannelIPCTransportHost::onWebChannelMessage(const std::vector<char> &me
     Q_EMIT messageReceived(doc.object(), this);
 }
 
+void WebChannelIPCTransportHost::onWebChannelMessageSync(const std::vector<char> &message, IPC::Message *reply)
+{
+    _mWaitingReply = reply;
+    onWebChannelMessage(message);
+}
+
 void WebChannelIPCTransportHost::RenderFrameCreated(content::RenderFrameHost *frame)
 {
     setWorldId(frame, m_worldId);
+}
+
+void WebChannelIPCTransportHost::Send(const IPC::Message *message)
+{
+    // an error has occurred during IPC_MESSAGE_HANDLER_DELAY_REPLY
 }
 
 bool WebChannelIPCTransportHost::OnMessageReceived(const IPC::Message& message, content::RenderFrameHost *receiver)
@@ -129,6 +148,7 @@ bool WebChannelIPCTransportHost::OnMessageReceived(const IPC::Message& message, 
     bool handled = true;
     IPC_BEGIN_MESSAGE_MAP(WebChannelIPCTransportHost, message)
         IPC_MESSAGE_HANDLER(WebChannelIPCTransportHost_SendMessage, onWebChannelMessage)
+        IPC_MESSAGE_HANDLER_DELAY_REPLY(WebChannelIPCTransportHost_SendMessageSync, onWebChannelMessageSync)
         IPC_MESSAGE_UNHANDLED(handled = false)
     IPC_END_MESSAGE_MAP()
     return handled;

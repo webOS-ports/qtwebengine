@@ -69,6 +69,56 @@ private:
     // gin::WrappableBase
     gin::ObjectTemplateBuilder GetObjectTemplateBuilder(v8::Isolate *isolate) override;
 
+    void NativeQtSendMessageSync(gin::Arguments *args)
+    {
+        blink::WebLocalFrame *frame = blink::WebLocalFrame::FrameForCurrentContext();
+        if (!frame || !frame->View())
+            return;
+
+        content::RenderFrame *renderFrame = content::RenderFrame::FromWebFrame(frame);
+        if (!renderFrame)
+            return;
+
+        std::string message;
+        if (!args->GetNext(&message))
+            return;
+
+        QByteArray valueData(message.data(), message.size());
+        QJsonParseError error;
+        QJsonDocument doc = QJsonDocument::fromJson(valueData, &error);
+        if (error.error != QJsonParseError::NoError) {
+            LOG(WARNING) << "Parsing error: " << qPrintable(error.errorString());
+            return;
+        }
+
+        int size = 0;
+        const char *rawData = doc.rawData(&size);
+        if (size == 0)
+            return;
+
+        std::vector<char> replyData;
+        WebChannelIPCTransportHost_SendMessageSync *messageSync = new WebChannelIPCTransportHost_SendMessageSync(
+                                                                    renderFrame->GetRoutingID(),
+                                                                    std::vector<char>(rawData, rawData + size),
+                                                                    &replyData);
+
+        // Enable the UI thread in browser to receive messages.
+        messageSync->EnableMessagePumping();
+        renderFrame->Send(messageSync);
+
+        QJsonDocument docReply = QJsonDocument::fromRawData(replyData.data(), replyData.size(), QJsonDocument::BypassValidation);
+        Q_ASSERT(docReply.isObject());
+        QByteArray jsonReply = docReply.toJson(QJsonDocument::Compact);
+
+        v8::Isolate* isolate = args->isolate();
+
+        v8::Local<v8::Object> replyObject = v8::Object::New(isolate);
+        replyObject->Set(v8::String::NewFromUtf8(isolate, "data"),
+                      v8::String::NewFromUtf8(isolate, jsonReply.constData(), v8::String::kNormalString, jsonReply.size()));
+
+        args->Return(replyObject);
+    }
+
     DISALLOW_COPY_AND_ASSIGN(WebChannelTransport);
 };
 
@@ -154,7 +204,8 @@ bool WebChannelTransport::NativeQtSendMessage(gin::Arguments *args)
 gin::ObjectTemplateBuilder WebChannelTransport::GetObjectTemplateBuilder(v8::Isolate *isolate)
 {
     return gin::Wrappable<WebChannelTransport>::GetObjectTemplateBuilder(isolate)
-        .SetMethod("send", &WebChannelTransport::NativeQtSendMessage);
+        .SetMethod("send", &WebChannelTransport::NativeQtSendMessage)
+        .SetMethod("sendSync", &WebChannelTransport::NativeQtSendMessageSync);
 }
 
 WebChannelIPCTransport::WebChannelIPCTransport(content::RenderFrame *renderFrame)

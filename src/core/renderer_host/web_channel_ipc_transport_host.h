@@ -59,6 +59,8 @@ public:
     void setWorldId(uint worldId) { setWorldId(base::Optional<uint>(worldId)); }
     uint worldId() const { return *m_worldId; }
 
+    void Send(const IPC::Message *message);
+
     // QWebChannelAbstractTransport
     void sendMessage(const QJsonObject &message) override;
 
@@ -66,6 +68,7 @@ private:
     void setWorldId(base::Optional<uint> worldId);
     void setWorldId(content::RenderFrameHost *frame, base::Optional<uint> worldId);
     void onWebChannelMessage(const std::vector<char> &message);
+    void onWebChannelMessageSync(const std::vector<char> &message, IPC::Message *reply);
 
     // WebContentsObserver
     void RenderFrameCreated(content::RenderFrameHost *frame) override;
@@ -74,6 +77,8 @@ private:
     // Empty only during construction/destruction. Synchronized to all the
     // WebChannelIPCTransports/RenderFrames in the observed WebContents.
     base::Optional<uint> m_worldId;
+
+    IPC::Message *_mWaitingReply;
 };
 
 } // namespace
