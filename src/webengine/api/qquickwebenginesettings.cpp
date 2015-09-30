@@ -472,6 +472,21 @@ QQuickWebEngineSettings::UnknownUrlSchemePolicy QQuickWebEngineSettings::unknown
     return static_cast<QQuickWebEngineSettings::UnknownUrlSchemePolicy>(d_ptr->unknownUrlSchemePolicy());
 }
 
+bool QQuickWebEngineSettings::palmServiceBridgeEnabled() const
+{
+    return d_ptr->testAttribute(WebEngineSettings::PalmServiceBridgeEnabled);
+}
+
+bool QQuickWebEngineSettings::luneOSPrivileged() const
+{
+    return d_ptr->testAttribute(WebEngineSettings::LuneOSPrivileged);
+}
+
+QString QQuickWebEngineSettings::luneOSIdentifier() const
+{
+    return d_ptr->luneOSIdentifier();
+}
+
 void QQuickWebEngineSettings::setAutoLoadImages(bool on)
 {
     bool wasOn = d_ptr->testAttribute(WebEngineSettings::AutoLoadImages);
@@ -674,6 +689,29 @@ void QQuickWebEngineSettings::setShowScrollBars(bool on)
     d_ptr->setAttribute(WebEngineSettings::ShowScrollBars, on);
     if (wasOn != on)
         Q_EMIT showScrollBarsChanged();
+}
+void QQuickWebEngineSettings::setPalmServiceBridgeEnabled(bool on)
+{
+    bool wasOn = d_ptr->testAttribute(WebEngineSettings::PalmServiceBridgeEnabled);
+    d_ptr->setAttribute(WebEngineSettings::PalmServiceBridgeEnabled, on);
+    if (wasOn != on)
+        Q_EMIT palmServiceBridgeEnabledChanged();
+}
+
+void QQuickWebEngineSettings::setLuneOSPrivileged(bool on)
+{
+    bool wasOn = d_ptr->testAttribute(WebEngineSettings::LuneOSPrivileged);
+    d_ptr->setAttribute(WebEngineSettings::LuneOSPrivileged, on);
+    if (wasOn != on)
+        Q_EMIT luneOSPrivilegedChanged();
+}
+
+void QQuickWebEngineSettings::setLuneOSIdentifier(QString identifier)
+{
+    const QString oldLuneOSIdentifier = d_ptr->luneOSIdentifier();
+    d_ptr->setLuneOSIdentifier(identifier);
+    if (oldLuneOSIdentifier.compare(identifier))
+        Q_EMIT luneOSIdentifierChanged();
 }
 
 void QQuickWebEngineSettings::setPlaybackRequiresUserGesture(bool on)

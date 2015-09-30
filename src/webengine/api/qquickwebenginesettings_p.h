@@ -92,6 +92,9 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineSettings : public QObject {
     Q_PROPERTY(bool playbackRequiresUserGesture READ playbackRequiresUserGesture WRITE setPlaybackRequiresUserGesture NOTIFY playbackRequiresUserGestureChanged REVISION 6 FINAL)
     Q_PROPERTY(bool webRTCPublicInterfacesOnly READ webRTCPublicInterfacesOnly WRITE setWebRTCPublicInterfacesOnly NOTIFY webRTCPublicInterfacesOnlyChanged REVISION 6 FINAL)
     Q_PROPERTY(bool javascriptCanPaste READ javascriptCanPaste WRITE setJavascriptCanPaste NOTIFY javascriptCanPasteChanged REVISION 6 FINAL)
+    Q_PROPERTY(bool palmServiceBridgeEnabled READ palmServiceBridgeEnabled WRITE setPalmServiceBridgeEnabled NOTIFY palmServiceBridgeEnabledChanged)
+    Q_PROPERTY(bool luneOSPrivileged READ luneOSPrivileged WRITE setLuneOSPrivileged NOTIFY luneOSPrivilegedChanged)
+    Q_PROPERTY(QString luneOSIdentifier READ luneOSIdentifier WRITE setLuneOSIdentifier NOTIFY luneOSIdentifierChanged)
 
 public:
     enum UnknownUrlSchemePolicy {
@@ -133,6 +136,9 @@ public:
     bool playbackRequiresUserGesture() const;
     bool webRTCPublicInterfacesOnly() const;
     bool javascriptCanPaste() const;
+    bool palmServiceBridgeEnabled() const;
+    bool luneOSPrivileged() const;
+    QString luneOSIdentifier() const;
 
     void setAutoLoadImages(bool on);
     void setJavascriptEnabled(bool on);
@@ -163,6 +169,9 @@ public:
     void setPlaybackRequiresUserGesture(bool on);
     void setWebRTCPublicInterfacesOnly(bool on);
     void setJavascriptCanPaste(bool on);
+    void setPalmServiceBridgeEnabled(bool on);
+    void setLuneOSPrivileged(bool on);
+    void setLuneOSIdentifier(QString identifier);
 
 signals:
     void autoLoadImagesChanged();
@@ -194,6 +203,9 @@ signals:
     Q_REVISION(6) void playbackRequiresUserGestureChanged();
     Q_REVISION(6) void webRTCPublicInterfacesOnlyChanged();
     Q_REVISION(6) void javascriptCanPasteChanged();
+    void palmServiceBridgeEnabledChanged();
+    void luneOSPrivilegedChanged();
+    void luneOSIdentifierChanged();
 
 private:
     explicit QQuickWebEngineSettings(QQuickWebEngineSettings *parentSettings = 0);

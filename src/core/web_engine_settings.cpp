@@ -251,6 +251,19 @@ WebEngineSettings::UnknownUrlSchemePolicy WebEngineSettings::unknownUrlSchemePol
     return AllowUnknownUrlSchemesFromUserInteraction;
 }
 
+void WebEngineSettings::setLuneOSIdentifier(const QString &identifier)
+{
+    m_luneOSIdentifier = identifier;
+    scheduleApplyRecursively();
+}
+
+QString WebEngineSettings::luneOSIdentifier() const
+{
+    if (!parentSettings)
+        return m_luneOSIdentifier;
+    return m_luneOSIdentifier.isEmpty()? parentSettings->luneOSIdentifier() : m_luneOSIdentifier;
+}
+
 void WebEngineSettings::initDefaults()
 {
     if (s_defaultAttributes.isEmpty()) {
@@ -298,6 +311,8 @@ void WebEngineSettings::initDefaults()
         s_defaultAttributes.insert(PlaybackRequiresUserGesture, playbackRequiresUserGesture);
         s_defaultAttributes.insert(WebRTCPublicInterfacesOnly, false);
         s_defaultAttributes.insert(JavascriptCanPaste, false);
+        s_defaultAttributes.insert(PalmServiceBridgeEnabled, false);
+        s_defaultAttributes.insert(LuneOSPrivileged, false);
     }
 
     if (s_defaultFontFamilies.isEmpty()) {
@@ -327,6 +342,8 @@ void WebEngineSettings::initDefaults()
         s_defaultFontSizes.insert(DefaultFixedFontSize, 13);
         s_defaultFontSizes.insert(DefaultFontSize, 16);
     }
+
+    m_luneOSIdentifier = "";
 
     m_defaultEncoding = QStringLiteral("ISO-8859-1");
     m_unknownUrlSchemePolicy = InheritedUnknownUrlSchemePolicy;
@@ -390,6 +407,8 @@ void WebEngineSettings::applySettingsToWebPreferences(content::WebPreferences *p
                                : content::AutoplayPolicy::kNoUserGestureRequired;
     }
     prefs->dom_paste_enabled = testAttribute(JavascriptCanPaste);
+    prefs->luneosPriviledged = testAttribute(LuneOSPrivileged);
+    prefs->luneosAppIdentifier = luneOSIdentifier().toStdString();
 
     // Fonts settings.
     prefs->standard_font_family_map[content::kCommonScript] = toString16(fontFamily(StandardFont));

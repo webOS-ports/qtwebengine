@@ -91,6 +91,8 @@ public:
         PlaybackRequiresUserGesture,
         WebRTCPublicInterfacesOnly,
         JavascriptCanPaste,
+        PalmServiceBridgeEnabled,
+        LuneOSPrivileged
     };
 
     // Must match the values from the public API in qwebenginesettings.h.
@@ -146,6 +148,9 @@ public:
     void setUnknownUrlSchemePolicy(UnknownUrlSchemePolicy policy);
     UnknownUrlSchemePolicy unknownUrlSchemePolicy() const;
 
+    void setLuneOSIdentifier(const QString &identifier);
+    QString luneOSIdentifier() const;
+
     void initDefaults();
     void scheduleApply();
 
@@ -164,6 +169,7 @@ private:
     QHash<FontFamily, QString> m_fontFamilies;
     QHash<FontSize, int> m_fontSizes;
     QString m_defaultEncoding;
+    QString m_luneOSIdentifier;
     QScopedPointer<content::WebPreferences> webPreferences;
     QScopedPointer<BatchTimer> m_batchTimer;
 
