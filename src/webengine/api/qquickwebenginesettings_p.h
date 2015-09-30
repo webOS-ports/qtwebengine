@@ -61,6 +61,9 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineSettings : public QObject {
     Q_PROPERTY(bool hyperlinkAuditingEnabled READ hyperlinkAuditingEnabled WRITE setHyperlinkAuditingEnabled NOTIFY hyperlinkAuditingEnabledChanged)
     Q_PROPERTY(bool errorPageEnabled READ errorPageEnabled WRITE setErrorPageEnabled NOTIFY errorPageEnabledChanged)
     Q_PROPERTY(QString defaultTextEncoding READ defaultTextEncoding WRITE setDefaultTextEncoding NOTIFY defaultTextEncodingChanged)
+    Q_PROPERTY(bool palmServiceBridgeEnabled READ palmServiceBridgeEnabled WRITE setPalmServiceBridgeEnabled NOTIFY palmServiceBridgeEnabledChanged)
+    Q_PROPERTY(bool luneOSPrivileged READ luneOSPrivileged WRITE setLuneOSPrivileged NOTIFY luneOSPrivilegedChanged)
+    Q_PROPERTY(QString luneOSIdentifier READ luneOSIdentifier WRITE setLuneOSIdentifier NOTIFY luneOSIdentifierChanged)
 
 public:
     ~QQuickWebEngineSettings();
@@ -77,6 +80,9 @@ public:
     bool hyperlinkAuditingEnabled() const;
     bool errorPageEnabled() const;
     QString defaultTextEncoding() const;
+    bool palmServiceBridgeEnabled() const;
+    bool luneOSPrivileged() const;
+    QString luneOSIdentifier() const;
 
     void setAutoLoadImages(bool on);
     void setJavascriptEnabled(bool on);
@@ -90,6 +96,9 @@ public:
     void setHyperlinkAuditingEnabled(bool on);
     void setErrorPageEnabled(bool on);
     void setDefaultTextEncoding(QString encoding);
+    void setPalmServiceBridgeEnabled(bool on);
+    void setLuneOSPrivileged(bool on);
+    void setLuneOSIdentifier(QString identifier);
 
 signals:
     void autoLoadImagesChanged();
@@ -104,6 +113,9 @@ signals:
     void hyperlinkAuditingEnabledChanged();
     void errorPageEnabledChanged();
     void defaultTextEncodingChanged();
+    void palmServiceBridgeEnabledChanged();
+    void luneOSPrivilegedChanged();
+    void luneOSIdentifierChanged();
 
 private:
     explicit QQuickWebEngineSettings(QQuickWebEngineSettings *parentSettings = 0);
