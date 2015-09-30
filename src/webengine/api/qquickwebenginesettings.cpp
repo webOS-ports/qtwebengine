@@ -245,6 +245,20 @@ QString QQuickWebEngineSettings::defaultTextEncoding() const
     return d_ptr->defaultTextEncoding();
 }
 
+bool QQuickWebEngineSettings::palmServiceBridgeEnabled() const
+{
+    return d_ptr->testAttribute(WebEngineSettings::PalmServiceBridgeEnabled);
+}
+bool QQuickWebEngineSettings::luneOSPrivileged() const
+{
+    return d_ptr->testAttribute(WebEngineSettings::LuneOSPrivileged);
+}
+QString QQuickWebEngineSettings::luneOSIdentifier() const
+{
+    return d_ptr->luneOSIdentifier();
+}
+
+
 void QQuickWebEngineSettings::setAutoLoadImages(bool on)
 {
     bool wasOn = d_ptr->testAttribute(WebEngineSettings::AutoLoadImages);
@@ -358,6 +372,30 @@ void QQuickWebEngineSettings::setDefaultTextEncoding(QString encoding)
     d_ptr->setDefaultTextEncoding(encoding);
     if (oldDefaultTextEncoding.compare(encoding))
         Q_EMIT defaultTextEncodingChanged();
+}
+
+void QQuickWebEngineSettings::setPalmServiceBridgeEnabled(bool on)
+{
+    bool wasOn = d_ptr->testAttribute(WebEngineSettings::PalmServiceBridgeEnabled);
+    d_ptr->setAttribute(WebEngineSettings::PalmServiceBridgeEnabled, on);
+    if (wasOn != on)
+        Q_EMIT palmServiceBridgeEnabledChanged();
+}
+
+void QQuickWebEngineSettings::setLuneOSPrivileged(bool on)
+{
+    bool wasOn = d_ptr->testAttribute(WebEngineSettings::LuneOSPrivileged);
+    d_ptr->setAttribute(WebEngineSettings::LuneOSPrivileged, on);
+    if (wasOn != on)
+        Q_EMIT luneOSPrivilegedChanged();
+}
+
+void QQuickWebEngineSettings::setLuneOSIdentifier(QString identifier)
+{
+    const QString oldLuneOSIdentifier = d_ptr->luneOSIdentifier();
+    d_ptr->setLuneOSIdentifier(identifier);
+    if (oldLuneOSIdentifier.compare(identifier))
+        Q_EMIT luneOSIdentifierChanged();
 }
 
 void QQuickWebEngineSettings::setParentSettings(QQuickWebEngineSettings *parentSettings)
