@@ -255,6 +255,7 @@ Q_SIGNALS:
     Q_REVISION(1) void webChannelChanged();
     Q_REVISION(1) void backgroundColorChanged();
     Q_REVISION(1) void renderProcessTerminated(RenderProcessTerminationStatus terminationStatus, int exitCode);
+    Q_REVISION(1) void windowCloseRequested();
 
 protected:
     void geometryChanged(const QRectF &newGeometry, const QRectF &oldGeometry);
