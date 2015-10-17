@@ -93,6 +93,12 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineSettings : public QObject {
     Q_PROPERTY(bool webRTCPublicInterfacesOnly READ webRTCPublicInterfacesOnly WRITE setWebRTCPublicInterfacesOnly NOTIFY webRTCPublicInterfacesOnlyChanged REVISION 6 FINAL)
     Q_PROPERTY(bool javascriptCanPaste READ javascriptCanPaste WRITE setJavascriptCanPaste NOTIFY javascriptCanPasteChanged REVISION 6 FINAL)
     Q_PROPERTY(bool dnsPrefetchEnabled READ dnsPrefetchEnabled WRITE setDnsPrefetchEnabled NOTIFY dnsPrefetchEnabledChanged REVISION 7 FINAL)
+    Q_PROPERTY(QString standardFontFamily READ standardFontFamily WRITE setStandardFontFamily NOTIFY standardFontFamilyChanged)
+    Q_PROPERTY(QString fixedFontFamily READ standardFontFamily WRITE setFixedFontFamily NOTIFY fixedFontFamilyChanged)
+    Q_PROPERTY(QString serifFontFamily READ standardFontFamily WRITE setSerifFontFamily NOTIFY serifFontFamilyChanged)
+    Q_PROPERTY(QString cursiveFontFamily READ standardFontFamily WRITE setCursiveFontFamily NOTIFY cursiveFontFamilyChanged)
+    Q_PROPERTY(int defaultFontSize READ defaultFontSize WRITE setDefaultFontSize NOTIFY defaultFontSizeChanged)
+    Q_PROPERTY(int defaultFixedFontSize READ defaultFixedFontSize WRITE setDefaultFixedFontSize NOTIFY defaultFixedFontSizeChanged)
 
 public:
     enum UnknownUrlSchemePolicy {
@@ -135,6 +141,12 @@ public:
     bool webRTCPublicInterfacesOnly() const;
     bool javascriptCanPaste() const;
     bool dnsPrefetchEnabled() const;
+    QString standardFontFamily() const;
+    QString fixedFontFamily() const;
+    QString serifFontFamily() const;
+    QString cursiveFontFamily() const;
+    int defaultFontSize() const;
+    int defaultFixedFontSize() const;
 
     void setAutoLoadImages(bool on);
     void setJavascriptEnabled(bool on);
@@ -166,6 +178,12 @@ public:
     void setWebRTCPublicInterfacesOnly(bool on);
     void setJavascriptCanPaste(bool on);
     void setDnsPrefetchEnabled(bool on);
+    void setStandardFontFamily(QString fontFamily);
+    void setFixedFontFamily(QString fontFamily);
+    void setSerifFontFamily(QString fontFamily);
+    void setCursiveFontFamily(QString fontFamily);
+    void setDefaultFontSize(int fontSize);
+    void setDefaultFixedFontSize(int fontSize);
 
 signals:
     void autoLoadImagesChanged();
@@ -198,6 +216,12 @@ signals:
     Q_REVISION(6) void webRTCPublicInterfacesOnlyChanged();
     Q_REVISION(6) void javascriptCanPasteChanged();
     Q_REVISION(7) void dnsPrefetchEnabledChanged();
+    void standardFontFamilyChanged();
+    void fixedFontFamilyChanged();
+    void serifFontFamilyChanged();
+    void cursiveFontFamilyChanged();
+    void defaultFontSizeChanged();
+    void defaultFixedFontSizeChanged();
 
 private:
     explicit QQuickWebEngineSettings(QQuickWebEngineSettings *parentSettings = 0);
