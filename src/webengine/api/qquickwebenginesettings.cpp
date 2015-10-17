@@ -489,7 +489,27 @@ QString QQuickWebEngineSettings::luneOSIdentifier() const
 
 QString QQuickWebEngineSettings::standardFontFamily() const
 {
-    return d_ptr->fontFamily(WebEngineSettings::StandardFont);;
+    return d_ptr->fontFamily(WebEngineSettings::StandardFont);
+}
+QString QQuickWebEngineSettings::fixedFontFamily() const
+{
+    return d_ptr->fontFamily(WebEngineSettings::FixedFont);
+}
+QString QQuickWebEngineSettings::serifFontFamily() const
+{
+    return d_ptr->fontFamily(WebEngineSettings::SerifFont);
+}
+QString QQuickWebEngineSettings::cursiveFontFamily() const
+{
+    return d_ptr->fontFamily(WebEngineSettings::CursiveFont);
+}
+int QQuickWebEngineSettings::defaultFontSize() const
+{
+    return d_ptr->fontSize(WebEngineSettings::DefaultFontSize);
+}
+int QQuickWebEngineSettings::defaultFixedFontSize() const
+{
+    return d_ptr->fontSize(WebEngineSettings::DefaultFixedFontSize);
 }
 
 void QQuickWebEngineSettings::setAutoLoadImages(bool on)
@@ -758,6 +778,46 @@ void QQuickWebEngineSettings::setStandardFontFamily(QString fontFamily)
     d_ptr->setFontFamily(WebEngineSettings::StandardFont, fontFamily);
     if (oldStandardFontFamily.compare(fontFamily))
         Q_EMIT standardFontFamilyChanged();
+}
+
+void QQuickWebEngineSettings::setFixedFontFamily(QString fontFamily)
+{
+    const QString oldFixedFontFamily = d_ptr->fontFamily(WebEngineSettings::FixedFont);
+    d_ptr->setFontFamily(WebEngineSettings::FixedFont, fontFamily);
+    if (oldFixedFontFamily.compare(fontFamily))
+        Q_EMIT fixedFontFamilyChanged();
+}
+
+void QQuickWebEngineSettings::setSerifFontFamily(QString fontFamily)
+{
+    const QString oldSerifFontFamily = d_ptr->fontFamily(WebEngineSettings::SerifFont);
+    d_ptr->setFontFamily(WebEngineSettings::SerifFont, fontFamily);
+    if (oldSerifFontFamily.compare(fontFamily))
+        Q_EMIT serifFontFamilyChanged();
+}
+
+void QQuickWebEngineSettings::setCursiveFontFamily(QString fontFamily)
+{
+    const QString oldCursiveFontFamily = d_ptr->fontFamily(WebEngineSettings::CursiveFont);
+    d_ptr->setFontFamily(WebEngineSettings::CursiveFont, fontFamily);
+    if (oldCursiveFontFamily.compare(fontFamily))
+        Q_EMIT standardFontFamilyChanged();
+}
+
+void QQuickWebEngineSettings::setDefaultFontSize(int fontSize)
+{
+    const int oldDefaultFontSize = d_ptr->fontSize(WebEngineSettings::DefaultFontSize);
+    d_ptr->setFontSize(WebEngineSettings::DefaultFontSize, fontSize);
+    if (oldDefaultFontSize!= fontSize)
+        Q_EMIT defaultFontSizeChanged();
+}
+
+void QQuickWebEngineSettings::setDefaultFixedFontSize(int fontSize)
+{
+    const int oldDefaultFixedFontSize = d_ptr->fontSize(WebEngineSettings::DefaultFixedFontSize);
+    d_ptr->setFontSize(WebEngineSettings::DefaultFixedFontSize, fontSize);
+    if (oldDefaultFixedFontSize != fontSize)
+        Q_EMIT defaultFixedFontSizeChanged();
 }
 
 void QQuickWebEngineSettings::setParentSettings(QQuickWebEngineSettings *parentSettings)
