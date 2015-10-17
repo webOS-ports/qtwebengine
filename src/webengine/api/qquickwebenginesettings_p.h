@@ -75,6 +75,8 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineSettings : public QObject {
     Q_PROPERTY(bool palmServiceBridgeEnabled READ palmServiceBridgeEnabled WRITE setPalmServiceBridgeEnabled NOTIFY palmServiceBridgeEnabledChanged)
     Q_PROPERTY(bool luneOSPrivileged READ luneOSPrivileged WRITE setLuneOSPrivileged NOTIFY luneOSPrivilegedChanged)
     Q_PROPERTY(QString luneOSIdentifier READ luneOSIdentifier WRITE setLuneOSIdentifier NOTIFY luneOSIdentifierChanged)
+    Q_PROPERTY(QString standardFontFamily READ standardFontFamily WRITE setStandardFontFamily NOTIFY standardFontFamilyChanged)
+
 
 public:
     ~QQuickWebEngineSettings();
@@ -94,6 +96,7 @@ public:
     bool palmServiceBridgeEnabled() const;
     bool luneOSPrivileged() const;
     QString luneOSIdentifier() const;
+    QString standardFontFamily() const;
 
     void setAutoLoadImages(bool on);
     void setJavascriptEnabled(bool on);
@@ -110,6 +113,7 @@ public:
     void setPalmServiceBridgeEnabled(bool on);
     void setLuneOSPrivileged(bool on);
     void setLuneOSIdentifier(QString identifier);
+    void setStandardFontFamily(QString fontFamily);
 
 signals:
     void autoLoadImagesChanged();
@@ -127,6 +131,7 @@ signals:
     void palmServiceBridgeEnabledChanged();
     void luneOSPrivilegedChanged();
     void luneOSIdentifierChanged();
+    void standardFontFamilyChanged();
 
 private:
     explicit QQuickWebEngineSettings(QQuickWebEngineSettings *parentSettings = 0);
