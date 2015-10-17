@@ -230,6 +230,10 @@ QString QQuickWebEngineSettings::luneOSIdentifier() const
 {
     return d_ptr->luneOSIdentifier();
 }
+QString QQuickWebEngineSettings::standardFontFamily() const
+{
+    return d_ptr->fontFamily(WebEngineSettings::StandardFont);;
+}
 
 
 void QQuickWebEngineSettings::setAutoLoadImages(bool on)
@@ -353,6 +357,14 @@ void QQuickWebEngineSettings::setLuneOSIdentifier(QString identifier)
     d_ptr->setLuneOSIdentifier(identifier);
     if (oldLuneOSIdentifier.compare(identifier))
         Q_EMIT luneOSIdentifierChanged();
+}
+
+void QQuickWebEngineSettings::setStandardFontFamily(QString fontFamily)
+{
+    const QString oldStandardFontFamily = d_ptr->fontFamily(WebEngineSettings::StandardFont);
+    d_ptr->setFontFamily(WebEngineSettings::StandardFont, fontFamily);
+    if (oldStandardFontFamily.compare(fontFamily))
+        Q_EMIT standardFontFamilyChanged();
 }
 
 void QQuickWebEngineSettings::setParentSettings(QQuickWebEngineSettings *parentSettings)
