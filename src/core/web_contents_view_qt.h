@@ -69,6 +69,9 @@ public:
     void initialize(WebContentsAdapterClient* client);
     WebContentsAdapterClient *client() { return m_client; }
 
+    virtual void setWindowAdditionalFeatures(const std::vector<base::string16> &additional_features) Q_DECL_OVERRIDE { m_additional_features = additional_features; }
+    virtual std::vector<base::string16> getWindowAdditionalFeatures() Q_DECL_OVERRIDE { return m_additional_features; }
+
     // content::WebContentsView overrides:
     content::RenderWidgetHostViewBase *CreateViewForWidget(content::RenderWidgetHost* render_widget_host, bool is_guest_view_hack) override;
 
@@ -136,6 +139,7 @@ private:
     WebContentsAdapterClient *m_client;
     WebContentsAdapterClient *m_factoryClient;
     bool m_allowOtherViews;
+    std::vector<base::string16> m_additional_features;
 };
 
 } // namespace QtWebEngineCore
