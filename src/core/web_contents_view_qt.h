@@ -45,6 +45,7 @@
 #include "content/browser/web_contents/web_contents_view.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host.h"
+#include "url/gurl.h"
 
 #include "qtwebenginecoreglobal_p.h"
 #include "render_widget_host_view_qt.h"
@@ -73,6 +74,8 @@ public:
 
     virtual void setWindowAdditionalFeatures(const std::vector<base::string16> &additional_features) Q_DECL_OVERRIDE { m_additional_features = additional_features; }
     virtual std::vector<base::string16> getWindowAdditionalFeatures() Q_DECL_OVERRIDE { return m_additional_features; }
+    virtual void setInitialTargetURL(const GURL &initialURL) Q_DECL_OVERRIDE { m_initialURL = initialURL; }
+    virtual GURL getInitialTargetURL() Q_DECL_OVERRIDE { return m_initialURL; }
 
     virtual content::RenderWidgetHostViewBase *CreateViewForWidget(content::RenderWidgetHost* render_widget_host, bool is_guest_view_hack) Q_DECL_OVERRIDE;
 
@@ -130,6 +133,7 @@ public:
 #endif // defined(OS_MACOSX)
 
 private:
+    GURL m_initialURL;
     content::WebContents *m_webContents;
     WebContentsAdapterClient *m_client;
     WebContentsAdapterClient *m_factoryClient;
