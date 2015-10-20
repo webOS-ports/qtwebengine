@@ -42,6 +42,7 @@
 
 #include "content/browser/renderer_host/render_view_host_delegate_view.h"
 #include "content/browser/web_contents/web_contents_view.h"
+#include "url/gurl.h"
 
 #include "api/qtwebenginecoreglobal_p.h"
 #include "web_contents_adapter_client.h"
@@ -68,6 +69,8 @@ public:
 
     virtual void setWindowAdditionalFeatures(const std::vector<base::string16> &additional_features) Q_DECL_OVERRIDE { m_additional_features = additional_features; }
     virtual std::vector<base::string16> getWindowAdditionalFeatures() Q_DECL_OVERRIDE { return m_additional_features; }
+    virtual void setInitialTargetURL(const GURL &initialURL) Q_DECL_OVERRIDE { m_initialURL = initialURL; }
+    virtual GURL getInitialTargetURL() Q_DECL_OVERRIDE { return m_initialURL; }
 
     // content::WebContentsView overrides:
     content::RenderWidgetHostViewBase *CreateViewForWidget(content::RenderWidgetHost *render_widget_host) override;
@@ -127,6 +130,7 @@ public:
     static WebEngineContextMenuData buildContextMenuData(const content::ContextMenuParams &params);
 
 private:
+    GURL m_initialURL;
     content::WebContents *m_webContents;
     WebContentsAdapterClient *m_client;
     WebContentsAdapterClient *m_factoryClient;
