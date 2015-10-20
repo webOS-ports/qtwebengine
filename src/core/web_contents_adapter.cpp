@@ -741,6 +741,16 @@ QUrl WebContentsAdapter::iconUrl() const
     return QUrl();
 }
 
+QUrl WebContentsAdapter::initialTargetUrl() const
+{
+    content::WebContentsView *contentsView = static_cast<content::WebContentsImpl*>(m_webContents.get())->GetView();
+    if (contentsView) {
+        return toQt(contentsView->getInitialTargetURL());
+    }
+
+    return QUrl();
+}
+
 QString WebContentsAdapter::pageTitle() const
 {
     CHECK_INITIALIZED(QString());
