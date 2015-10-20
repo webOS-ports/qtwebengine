@@ -99,8 +99,8 @@ const QStringList &QQuickWebEngineNewViewRequest::additionalFeatures() const
 
 QUrl QQuickWebEngineNewViewRequest::url() const
 {
-    if (!m_adapter) {
-        return m_adapter->activeUrl();
+    if (m_adapter) {
+        return m_adapter->initialTargetUrl();
     }
     return QUrl();
 }
