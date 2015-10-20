@@ -130,6 +130,7 @@ public:
     QString pageTitle() const;
     QString selectedText() const;
     QUrl iconUrl() const;
+    QUrl initialTargetUrl() const;
 
     void undo();
     void redo();
