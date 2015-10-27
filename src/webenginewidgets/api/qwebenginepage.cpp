@@ -185,6 +185,7 @@ QWebEnginePagePrivate::QWebEnginePagePrivate(QWebEngineProfile *_profile)
     , view(0)
     , isLoading(false)
     , scriptCollection(new QWebEngineScriptCollectionPrivate(browserContextAdapter()->userScriptController(), adapter.data()))
+    , m_backgroundColor(Qt::white)
 {
     memset(actions, 0, sizeof(actions));
 }
@@ -245,6 +246,11 @@ QRectF QWebEnginePagePrivate::viewportRect() const
 qreal QWebEnginePagePrivate::dpiScale() const
 {
     return 1.0;
+}
+
+QColor QWebEnginePagePrivate::backgroundColor() const
+{
+    return m_backgroundColor;
 }
 
 void QWebEnginePagePrivate::loadStarted(const QUrl &provisionalUrl, bool isErrorPage)
@@ -532,6 +538,33 @@ void QWebEnginePage::setWebChannel(QWebChannel *channel)
     d->adapter->setWebChannel(channel);
 }
 
+/*!
+    \property QWebEnginePage::backgroundColor
+    \brief the page's background color, behing the document's body.
+    \since 5.6
+
+    You can set it to Qt::transparent or to a translucent
+    color to see through the document, or you can set this color to match your
+    web content in an hybrid app to prevent the white flashes that may appear
+    during loading.
+
+    The default value is white.
+*/
+QColor QWebEnginePage::backgroundColor() const
+{
+    Q_D(const QWebEnginePage);
+    return d->m_backgroundColor;
+}
+
+void QWebEnginePage::setBackgroundColor(const QColor &color)
+{
+    Q_D(QWebEnginePage);
+    if (d->m_backgroundColor == color)
+        return;
+    d->m_backgroundColor = color;
+    d->adapter->backgroundColorChanged();
+}
+
 void QWebEnginePage::setView(QWidget *view)
 {
     QWebEngineViewPrivate::bind(qobject_cast<QWebEngineView*>(view), this);
@@ -806,6 +839,14 @@ void QWebEnginePagePrivate::moveValidationMessage(const QRect &anchor)
 #ifdef QT_UI_DELEGATES
     QtWebEngineWidgetUI::MessageBubbleWidget::moveBubble(view, anchor);
 #endif
+}
+
+void QWebEnginePagePrivate::renderProcessTerminated(RenderProcessTerminationStatus terminationStatus,
+                                                int exitCode)
+{
+    Q_Q(QWebEnginePage);
+    Q_EMIT q->renderProcessTerminated(static_cast<QWebEnginePage::RenderProcessTerminationStatus>(
+                                      terminationStatus), exitCode);
 }
 
 namespace {

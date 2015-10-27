@@ -496,6 +496,16 @@
 */
 
 /*!
+    \qmlsignal WebEngineView::windowCloseRequested()
+    \since QtWebEngine 1.2
+
+    This signal is emitted whenever the page requests the web browser window to be closed,
+    for example through the JavaScript \c{window.close()} call.
+
+    The corresponding handler is \c onWindowCloseRequested.
+*/
+
+/*!
     \qmlproperty enumeration WebEngineView::ErrorDomain
 
     This enumeration details various high-level error types.

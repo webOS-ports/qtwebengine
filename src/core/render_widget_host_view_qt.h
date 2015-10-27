@@ -125,6 +125,7 @@ public:
     virtual void Hide() Q_DECL_OVERRIDE;
     virtual bool IsShowing() Q_DECL_OVERRIDE;
     virtual gfx::Rect GetViewBounds() const Q_DECL_OVERRIDE;
+    virtual void SetBackgroundColor(SkColor color) Q_DECL_OVERRIDE;
     virtual bool LockMouse() Q_DECL_OVERRIDE;
     virtual void UnlockMouse() Q_DECL_OVERRIDE;
     virtual void WasShown() Q_DECL_OVERRIDE;

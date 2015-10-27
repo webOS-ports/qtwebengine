@@ -98,6 +98,7 @@ class QWEBENGINEWIDGETS_EXPORT QWebEnginePage : public QObject {
     Q_PROPERTY(QString title READ title)
     Q_PROPERTY(QUrl url READ url WRITE setUrl)
     Q_PROPERTY(QUrl iconUrl READ iconUrl)
+    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor)
 
 public:
     enum WebAction {
@@ -174,6 +175,14 @@ public:
         ErrorMessageLevel
     };
 
+    // must match WebContentsAdapterClient::RenderProcessTerminationStatus
+    enum RenderProcessTerminationStatus {
+        NormalTerminationStatus = 0,
+        AbnormalTerminationStatus,
+        CrashedTerminationStatus,
+        KilledTerminationStatus
+    };
+
     explicit QWebEnginePage(QObject *parent = 0);
     QWebEnginePage(QWebEngineProfile *profile, QObject *parent = 0);
     ~QWebEnginePage();
@@ -236,6 +245,8 @@ public:
 
     QWebChannel *webChannel() const;
     void setWebChannel(QWebChannel *);
+    QColor backgroundColor() const;
+    void setBackgroundColor(const QColor &color);
 
 Q_SIGNALS:
     void loadStarted();
@@ -252,6 +263,8 @@ Q_SIGNALS:
 
     void authenticationRequired(const QUrl &requestUrl, QAuthenticator *authenticator);
     void proxyAuthenticationRequired(const QUrl &requestUrl, QAuthenticator *authenticator, const QString &proxyHost);
+
+    void renderProcessTerminated(RenderProcessTerminationStatus terminationStatus, int exitCode);
 
     // Ex-QWebFrame signals
     void titleChanged(const QString &title);

@@ -133,6 +133,13 @@ public:
         Error
     };
 
+    enum RenderProcessTerminationStatus {
+        NormalTerminationStatus = 0,
+        AbnormalTerminationStatus,
+        CrashedTerminationStatus,
+        KilledTerminationStatus
+    };
+
     enum MediaRequestFlag {
         MediaNone = 0,
         MediaAudioCapture = 0x01,
@@ -152,6 +159,7 @@ public:
     virtual void selectionChanged() = 0;
     virtual QRectF viewportRect() const = 0;
     virtual qreal dpiScale() const = 0;
+    virtual QColor backgroundColor() const = 0;
     virtual void loadStarted(const QUrl &provisionalUrl, bool isErrorPage = false) = 0;
     virtual void loadCommitted() = 0;
     virtual void loadVisuallyCommitted() = 0;
@@ -185,6 +193,8 @@ public:
     virtual void showValidationMessage(const QRect &anchor, const QString &mainText, const QString &subText) = 0;
     virtual void hideValidationMessage() = 0;
     virtual void moveValidationMessage(const QRect &anchor) = 0;
+    RenderProcessTerminationStatus renderProcessExitStatus(int);
+    virtual void renderProcessTerminated(RenderProcessTerminationStatus terminationStatus, int exitCode) = 0;
 
     virtual void allowCertificateError(const QSharedPointer<CertificateErrorController> &errorController) = 0;
 
