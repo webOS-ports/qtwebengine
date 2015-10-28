@@ -508,7 +508,7 @@ void QQuickWebEngineViewPrivate::unhandledKeyEvent(QKeyEvent *event)
         QCoreApplication::sendEvent(q->parentItem(), event);
 }
 
-void QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &, const QUrl &targetUrl, const QStringList &additionalFeaturesStringList)
+void QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &requestedGeometry, const QStringList &additionalFeaturesStringList)
 {
     Q_Q(QQuickWebEngineView);
     QQuickWebEngineNewViewRequest request;
@@ -518,6 +518,7 @@ void QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapte
     request.m_isUserInitiated = userGesture;
     request.m_requestedUrl = targetUrl;
     request.m_additionalFeatures = additionalFeaturesStringList;
+    request.m_requestedGeometry = requestedGeometry;
 
     switch (disposition) {
     case WebContentsAdapterClient::NewForegroundTabDisposition:
