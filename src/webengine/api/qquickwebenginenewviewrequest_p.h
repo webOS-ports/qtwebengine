@@ -67,7 +67,8 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineNewViewRequest : public QObject 
     Q_PROPERTY(QQuickWebEngineView::NewViewDestination destination READ destination CONSTANT FINAL)
     Q_PROPERTY(bool userInitiated READ isUserInitiated CONSTANT FINAL)
     Q_PROPERTY(QStringList additionalFeatures READ additionalFeatures CONSTANT FINAL)
-    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QUrl url READ url CONSTANT FINAL)
+    Q_PROPERTY(QRect requestedGeometry READ requestedGeometry CONSTANT FINAL)
 public:
     ~QQuickWebEngineNewViewRequest();
 
@@ -76,6 +77,7 @@ public:
     const QStringList &additionalFeatures() const;
     Q_INVOKABLE void openIn(QQuickWebEngineView *view);
     QUrl url() const;
+    QRect requestedGeometry() const;
 
 private:
     QQuickWebEngineNewViewRequest();
@@ -84,6 +86,7 @@ private:
     QExplicitlySharedDataPointer<QtWebEngineCore::WebContentsAdapter> m_adapter;
     QUrl m_requestedUrl;
     friend class QQuickWebEngineView;
+    QRect m_requestedGeometry;
     QStringList m_additionalFeatures;
     friend class QQuickWebEngineViewPrivate;
 };
