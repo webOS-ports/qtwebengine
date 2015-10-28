@@ -92,6 +92,11 @@ QUrl QQuickWebEngineNewViewRequest::url() const
     return QUrl();
 }
 
+QRect QQuickWebEngineNewViewRequest::requestedGeometry() const
+{
+    return m_requestedGeometry;
+}
+
 /*!
     \qmlmethod WebEngineNewViewRequest::openIn(WebEngineView view)
 
