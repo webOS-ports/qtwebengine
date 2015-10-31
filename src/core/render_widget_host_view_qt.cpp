@@ -42,6 +42,7 @@
 #include "browser_accessibility_manager_qt.h"
 #include "common/qt_messages.h"
 #include "compositor/compositor.h"
+#include "web_contents_view_qt.h"
 #include "qtwebenginecoreglobal_p.h"
 #include "render_widget_host_view_qt_delegate.h"
 #include "touch_handle_drawable_client.h"
@@ -936,6 +937,15 @@ void RenderWidgetHostViewQt::visualPropertiesChanged()
     gfx::Rect oldWindowRect = m_windowRectInDips;
     QWindow *window = m_delegate->window();
     m_windowRectInDips = window ? toGfx(window->frameGeometry()) : gfx::Rect();
+
+/*  TODO
+    if( window ) {
+        GetScreenInfoFromNativeWindow(window, results);
+    }
+    else {
+        content::WebContentsView::GetDefaultScreenInfo(results);
+    }
+*/
 
     content::ScreenInfo oldScreenInfo = m_screenInfo;
     m_screenInfo = screenInfoFromQScreen(window ? window->screen() : nullptr);

@@ -522,7 +522,7 @@ void QQuickWebEngineViewPrivate::unhandledKeyEvent(QKeyEvent *event)
         QCoreApplication::sendEvent(q->parentItem(), event);
 }
 
-void QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &requestedGeometry, const QStringList &additionalFeaturesStringList)
+void QQuickWebEngineViewPrivate::adoptNewWindow(QSharedPointer<WebContentsAdapter> newWebContents, WindowOpenDisposition disposition, bool userGesture, const QRect &requestedGeometry, const QUrl &targetUrl, const QStringList &additionalFeaturesStringList)
 {
     Q_Q(QQuickWebEngineView);
     QQuickWebEngineNewViewRequest request;
