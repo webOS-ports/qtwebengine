@@ -662,9 +662,12 @@ void RenderWidgetHostViewQt::OnSwapCompositorFrame(uint32 output_surface_id, sco
 void RenderWidgetHostViewQt::GetScreenInfo(blink::WebScreenInfo* results)
 {
     QWindow* window = m_delegate->window();
-    if (!window)
-        return;
-    GetScreenInfoFromNativeWindow(window, results);
+    if( window ) {
+        GetScreenInfoFromNativeWindow(window, results);
+    }
+    else {
+        GetDefaultScreenInfo(results);
+    }
 
     // Support experimental.viewport.devicePixelRatio
     results->deviceScaleFactor *= dpiScale();
