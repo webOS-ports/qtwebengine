@@ -782,9 +782,12 @@ void RenderWidgetHostViewQt::SubmitCompositorFrame(const viz::LocalSurfaceId &lo
 void RenderWidgetHostViewQt::GetScreenInfo(content::ScreenInfo* results)
 {
     QWindow* window = m_delegate->window();
-    if (!window)
-        return;
-    GetScreenInfoFromNativeWindow(window, results);
+    if( window ) {
+        GetScreenInfoFromNativeWindow(window, results);
+    }
+    else {
+        GetDefaultScreenInfo(results);
+    }
 
     // Support experimental.viewport.devicePixelRatio
     results->device_scale_factor *= dpiScale();
