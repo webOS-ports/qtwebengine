@@ -43,6 +43,7 @@
 #include "chromium_overrides.h"
 #include "common/qt_messages.h"
 #include "compositor.h"
+#include "web_contents_view_qt.h"
 #include "qtwebenginecoreglobal_p.h"
 #include "render_widget_host_view_qt_delegate.h"
 #include "type_conversion.h"
@@ -721,9 +722,12 @@ void RenderWidgetHostViewQt::SubmitCompositorFrame(const viz::LocalSurfaceId &lo
 void RenderWidgetHostViewQt::GetScreenInfo(content::ScreenInfo *results) const
 {
     QWindow *window = m_delegate->window();
-    if (!window)
-        return;
-    GetScreenInfoFromNativeWindow(window, results);
+    if( window ) {
+        GetScreenInfoFromNativeWindow(window, results);
+    }
+    else {
+        content::WebContentsView::GetDefaultScreenInfo(results);
+    }
 
     // Support experimental.viewport.devicePixelRatio
     results->device_scale_factor *= dpiScale();
