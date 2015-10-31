@@ -43,6 +43,7 @@
 #include "browser_accessibility_manager_qt.h"
 #include "browser_accessibility_qt.h"
 #include "chromium_overrides.h"
+#include "web_contents_view_qt.h"
 #include "delegated_frame_node.h"
 #include "qtwebenginecoreglobal_p.h"
 #include "render_widget_host_view_qt_delegate.h"
@@ -803,9 +804,12 @@ void RenderWidgetHostViewQt::SubmitCompositorFrame(const viz::LocalSurfaceId &lo
 void RenderWidgetHostViewQt::GetScreenInfo(content::ScreenInfo* results)
 {
     QWindow* window = m_delegate->window();
-    if (!window)
-        return;
-    GetScreenInfoFromNativeWindow(window, results);
+    if( window ) {
+        GetScreenInfoFromNativeWindow(window, results);
+    }
+    else {
+        content::WebContentsView::GetDefaultScreenInfo(results);
+    }
 
     // Support experimental.viewport.devicePixelRatio
     results->device_scale_factor *= dpiScale();
