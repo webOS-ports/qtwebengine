@@ -63,7 +63,7 @@ void WebChannelIPCTransportHost::sendMessage(const QJsonObject &message)
     int size = 0;
     const char *rawData = doc.rawData(&size);
 
-    if (_mWaitingReply) {
+    if (_mWaitingReply && message["id"].toInt() == -1) {
         WebChannelIPCTransportHost_SendMessageSync::WriteReplyParams(_mWaitingReply, std::vector<char>(rawData, rawData + size));
         Send(_mWaitingReply);
         _mWaitingReply = 0;
