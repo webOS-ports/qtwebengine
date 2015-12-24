@@ -43,6 +43,8 @@
 #include <map>
 #include <QtCore/qcompilerdetection.h>
 
+#include <QCoreApplication>
+
 #include "web_contents_adapter_client.h"
 
 #include "base/callback.h"
