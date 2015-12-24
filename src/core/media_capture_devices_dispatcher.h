@@ -45,6 +45,8 @@
 #include <list>
 #include <map>
 
+#include <QCoreApplication>
+
 #include "web_contents_adapter_client.h"
 
 #include "base/callback.h"
