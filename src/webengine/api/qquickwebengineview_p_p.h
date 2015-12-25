@@ -60,6 +60,8 @@
 #include <QString>
 #include <QtCore/qcompilerdetection.h>
 #include <QtGui/qaccessibleobject.h>
+#include <QColor>
+
 
 namespace QtWebEngineCore {
 class WebContentsAdapter;
