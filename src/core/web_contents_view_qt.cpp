@@ -133,6 +133,9 @@ static WebEngineContextMenuData fromParams(const content::ContextMenuParams &par
 
 void WebContentsViewQt::ShowContextMenu(content::RenderFrameHost *, const content::ContextMenuParams &params)
 {
+    // disable default context menu for LuneOS
+    return;
+
     WebEngineContextMenuData contextMenuData(fromParams(params));
     m_client->contextMenuRequested(contextMenuData);
 }
