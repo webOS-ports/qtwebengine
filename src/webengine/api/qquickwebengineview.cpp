@@ -573,6 +573,9 @@ void QQuickWebEngineViewPrivate::adoptWebContents(WebContentsAdapter *webContent
     if (adapter)
         qmlWebChannel = qobject_cast<QQmlWebChannel *>(adapter->webChannel());
 
+    // continue to hold a reference to the old adapter until this method ends
+    QExplicitlySharedDataPointer<QtWebEngineCore::WebContentsAdapter> previousAdapter = adapter;
+
     // This throws away the WebContentsAdapter that has been used until now.
     // All its states, particularly the loading URL, are replaced by the adopted WebContentsAdapter.
     adapter = webContents;
