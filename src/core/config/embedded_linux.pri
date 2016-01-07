@@ -50,6 +50,8 @@ GYP_CONFIG += \
     v8_use_snapshot=false \
     want_separate_host_toolset=1 \
     enable_palmbridge=1 \
+    use_alsa=1 \
+    use_pulseaudio=1 \
 
 
 contains(QT_CONFIG, system-jpeg): GYP_CONFIG += use_system_libjpeg=1
