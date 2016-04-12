@@ -160,41 +160,6 @@ QQuickWebEngineContextMenuData::MediaType QQuickWebEngineContextMenuData::mediaT
     return d ? static_cast<QQuickWebEngineContextMenuData::MediaType>(d->mediaType) : MediaTypeNone;
 }
 
-/*!
-    \qmlproperty bool WebEngineDownloadItem::isContentEditable
-
-    Returns \c true if the content is editable by the user; otherwise returns \c false.
-*/
-bool QQuickWebEngineContextMenuData::isContentEditable() const
-{
-    return d ? d->isEditable : false;
-}
-
-#if !defined(QT_NO_SPELLCHECK)
-/*!
-    \qmlproperty QString WebEngineDownloadItem::misspelledWord
-
-    If the context is a word considered misspelled by the spell-checker, returns the misspelled word.
-*/
-QString QQuickWebEngineContextMenuData::misspelledWord() const
-{
-    if (d)
-        return d->misspelledWord;
-    return QString();
-}
-
-/*!
-    \qmlproperty QStringList WebEngineDownloadItem::spellCheckerSuggestions
-
-    If the context is a word considered misspelled by the spell-checker, returns a list of suggested replacements.
-*/
-QStringList QQuickWebEngineContextMenuData::spellCheckerSuggestions() const
-{
-    if (d)
-        return d->spellCheckerSuggestions;
-    return QStringList();
-}
-#endif
 
 void QQuickWebEngineContextMenuData::update(const QtWebEngineCore::WebEngineContextMenuData &update)
 {
@@ -221,17 +186,6 @@ void QQuickWebEngineContextMenuData::update(const QtWebEngineCore::WebEngineCont
 
     if (mediaType() != old.mediaType())
         Q_EMIT mediaTypeChanged();
-
-    if (isContentEditable() != old.isContentEditable())
-        Q_EMIT isContentEditableChanged();
-
-#if !defined(QT_NO_SPELLCHECK)
-    if (misspelledWord() != old.misspelledWord())
-        Q_EMIT misspelledWordChanged();
-
-    if (spellCheckerSuggestions() != old.spellCheckerSuggestions())
-        Q_EMIT spellCheckerSuggestionsChanged();
-#endif
 }
 
 QQuickWebEngineContextMenuData::QQuickWebEngineContextMenuData(const QQuickWebEngineContextMenuDataPrivate *p, QObject *parent)
