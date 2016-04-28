@@ -53,8 +53,9 @@
 #include "cookie_monster_delegate_qt.h"
 #include "network_delegate_qt.h"
 
-#include "qglobal.h"
-#include <qatomic.h>
+#include <QtCore/qglobal.h>
+#include <QtCore/qatomic.h>
+#include <QtCore/qsharedpointer.h>
 
 namespace net {
 class MappedHostResolver;
@@ -67,7 +68,7 @@ class BrowserContextAdapter;
 
 class URLRequestContextGetterQt : public net::URLRequestContextGetter {
 public:
-    explicit URLRequestContextGetterQt(BrowserContextAdapter *browserContext, content::ProtocolHandlerMap *protocolHandlers, content::URLRequestInterceptorScopedVector request_interceptors);
+    URLRequestContextGetterQt(QSharedPointer<BrowserContextAdapter> browserContext, content::ProtocolHandlerMap *protocolHandlers, content::URLRequestInterceptorScopedVector request_interceptors);
 
     virtual net::URLRequestContext *GetURLRequestContext() Q_DECL_OVERRIDE;
     virtual scoped_refptr<base::SingleThreadTaskRunner> GetNetworkTaskRunner() const Q_DECL_OVERRIDE;
@@ -88,13 +89,15 @@ private:
     void generateHttpCache();
     void generateUserAgent();
     void generateJobFactory();
+    void regenerateJobFactory(const QList<QByteArray> customSchemes);
     void cancelAllUrlRequests();
     net::HttpNetworkSession::Params generateNetworkSessionParams();
 
     bool m_ignoreCertificateErrors;
     QAtomicInt m_updateCookieStore;
     QAtomicInt m_updateHttpCache;
-    QExplicitlySharedDataPointer<BrowserContextAdapter> m_browserContext;
+    QAtomicInt m_updateJobFactory;
+    QSharedPointer<BrowserContextAdapter> m_browserContext;
     content::ProtocolHandlerMap m_protocolHandlers;
 
     QAtomicPointer<net::ProxyConfigService> m_proxyConfigService;
@@ -102,9 +105,11 @@ private:
     scoped_ptr<NetworkDelegateQt> m_networkDelegate;
     scoped_ptr<net::URLRequestContextStorage> m_storage;
     scoped_ptr<net::URLRequestJobFactory> m_jobFactory;
+    net::URLRequestJobFactoryImpl *m_baseJobFactory;
     scoped_ptr<net::DhcpProxyScriptFetcherFactory> m_dhcpProxyScriptFetcherFactory;
     scoped_refptr<CookieMonsterDelegateQt> m_cookieDelegate;
     content::URLRequestInterceptorScopedVector m_requestInterceptors;
+    QList<QByteArray> m_installedCustomSchemes;
 
     friend class NetworkDelegateQt;
 };

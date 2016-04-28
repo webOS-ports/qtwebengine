@@ -436,7 +436,7 @@ void QWebEnginePagePrivate::setFullScreenMode(bool fullscreen)
     }
 }
 
-BrowserContextAdapter *QWebEnginePagePrivate::browserContextAdapter()
+QSharedPointer<BrowserContextAdapter> QWebEnginePagePrivate::browserContextAdapter()
 {
     return profile->d_ptr->browserContext();
 }
@@ -647,6 +647,10 @@ QAction *QWebEnginePage::action(WebAction action) const
         break;
     case Reload:
         text = tr("Reload");
+        icon = style->standardIcon(QStyle::SP_BrowserReload);
+        break;
+    case ReloadAndBypassCache:
+        text = tr("Reload and Bypass Cache");
         icon = style->standardIcon(QStyle::SP_BrowserReload);
         break;
     case Cut:

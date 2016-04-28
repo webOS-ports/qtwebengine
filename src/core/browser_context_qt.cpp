@@ -134,7 +134,7 @@ content::PushMessagingService *BrowserContextQt::GetPushMessagingService()
 content::SSLHostStateDelegate* BrowserContextQt::GetSSLHostStateDelegate()
 {
     if (!sslHostStateDelegate)
-        sslHostStateDelegate.reset(new SSLHostStateDelegateQt(m_adapter));
+        sslHostStateDelegate.reset(new SSLHostStateDelegateQt());
     return sslHostStateDelegate.get();
 }
 
@@ -146,13 +146,13 @@ scoped_ptr<content::ZoomLevelDelegate> BrowserContextQt::CreateZoomLevelDelegate
 content::PermissionManager *BrowserContextQt::GetPermissionManager()
 {
     if (!permissionManager)
-        permissionManager.reset(new PermissionManagerQt(m_adapter));
+        permissionManager.reset(new PermissionManagerQt());
     return permissionManager.get();
 }
 
 net::URLRequestContextGetter *BrowserContextQt::CreateRequestContext(content::ProtocolHandlerMap *protocol_handlers, content::URLRequestInterceptorScopedVector request_interceptors)
 {
-    url_request_getter_ = new URLRequestContextGetterQt(m_adapter, protocol_handlers, request_interceptors.Pass());
+    url_request_getter_ = new URLRequestContextGetterQt(m_adapter->sharedFromThis(), protocol_handlers, request_interceptors.Pass());
     return url_request_getter_.get();
 }
 

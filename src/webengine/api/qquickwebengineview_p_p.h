@@ -174,7 +174,7 @@ public:
                                      int exitCode) Q_DECL_OVERRIDE;
     virtual void requestGeometryChange(const QRect &geometry) Q_DECL_OVERRIDE { Q_UNUSED(geometry); }
 
-    virtual QtWebEngineCore::BrowserContextAdapter *browserContextAdapter() Q_DECL_OVERRIDE;
+    virtual QSharedPointer<QtWebEngineCore::BrowserContextAdapter> browserContextAdapter() Q_DECL_OVERRIDE;
 
     void setDevicePixelRatio(qreal);
     void adoptWebContents(QtWebEngineCore::WebContentsAdapter *webContents);
@@ -215,6 +215,7 @@ private:
     QList<QQuickWebEngineScript *> m_userScripts;
     qreal m_dpiScale;
     QColor m_backgroundColor;
+    qreal m_defaultZoomFactor;
 };
 
 #ifndef QT_NO_ACCESSIBILITY
