@@ -725,7 +725,9 @@ QAction *QWebEnginePage::action(WebAction action) const
     case RequestClose:
         text = tr("Close Page");
         break;
-    default:
+    case NoWebAction:
+    case WebActionCount:
+        Q_UNREACHABLE();
         break;
     }
 
@@ -898,8 +900,11 @@ void QWebEnginePage::triggerAction(WebAction action, bool)
     case RequestClose:
         d->adapter->requestClose();
         break;
-    default:
+    case NoWebAction:
+        break;
+    case WebActionCount:
         Q_UNREACHABLE();
+        break;
     }
 }
 
@@ -955,11 +960,10 @@ bool QWebEnginePagePrivate::contextMenuRequested(const WebEngineContextMenuData 
             QMenu::exec(view->actions(), event.globalPos(), 0, view);
             break;
         }
-        // fall through
-    default:
+        // fallthrough
+    case Qt::NoContextMenu:
         event.ignore();
         return false;
-        break;
     }
     view->d_func()->m_pendingContextMenuEvent = false;
     return true;
@@ -1008,8 +1012,6 @@ void QWebEnginePagePrivate::javascriptDialog(QSharedPointer<JavaScriptDialogCont
     case InternalAuthorizationDialog:
         accepted = (QMessageBox::question(view, controller->title(), controller->message(), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes);
         break;
-    default:
-        Q_UNREACHABLE();
     }
     if (accepted)
         controller->accept();
@@ -1174,7 +1176,7 @@ void QWebEnginePage::setFeaturePermission(const QUrl &securityOrigin, QWebEngine
         else
             d->adapter->grantMouseLockPermission(false);
         break;
-    default:
+    case Notifications:
         break;
     }
 }
@@ -1340,7 +1342,6 @@ QStringList QWebEnginePage::chooseFiles(FileSelectionMode mode, const QStringLis
         if (!str.isNull())
             ret << str;
         break;
-    default:
     case FilePickerController::Open:
         str = QFileDialog::getOpenFileName(view(), QString(), oldFiles.first());
         if (!str.isNull())
