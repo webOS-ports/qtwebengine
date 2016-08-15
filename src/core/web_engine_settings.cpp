@@ -303,6 +303,7 @@ void WebEngineSettings::applySettingsToWebPreferences(content::WebPreferences *p
     // Override for now
     prefs->java_enabled = false;
     prefs->touch_enabled = isTouchScreenAvailable();
+    prefs->password_echo_enabled = true;
 
     // Attributes mapping.
     prefs->loads_images_automatically = testAttribute(AutoLoadImages);
