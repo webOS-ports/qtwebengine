@@ -356,6 +356,7 @@ void WebEngineSettings::applySettingsToWebPreferences(content::WebPreferences *p
 {
     // Override for now
     prefs->touch_event_feature_detection_enabled = isTouchEventsAPIEnabled();
+    prefs->password_echo_enabled = true;
     if (prefs->viewport_enabled) {
         // We need to enable the viewport options together as it doesn't really work
         // to enable them separately. With viewport-enabled we match Android defaults.
