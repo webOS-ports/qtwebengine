@@ -1,7 +1,7 @@
 /****************************************************************************
 **
-** Copyright (C) 2015 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
+** Copyright (C) 2016 The Qt Company Ltd.
+** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the QtWebEngine module of the Qt Toolkit.
 **
@@ -11,24 +11,27 @@
 ** accordance with the commercial license agreement provided with the
 ** Software or, alternatively, in accordance with the terms contained in
 ** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
+** and conditions see https://www.qt.io/terms-conditions. For further
+** information use the contact form at https://www.qt.io/contact-us.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
 ** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
+** Foundation and appearing in the file LICENSE.LGPL3 included in the
 ** packaging of this file. Please review the following information to
 ** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
+** will be met: https://www.gnu.org/licenses/lgpl-3.0.html.
 **
 ** GNU General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
+** General Public License version 2.0 or (at your option) the GNU General
+** Public license version 3 or any later version approved by the KDE Free
+** Qt Foundation. The licenses are as published by the Free Software
+** Foundation and appearing in the file LICENSE.GPL2 and LICENSE.GPL3
+** included in the packaging of this file. Please review the following
+** information to ensure the GNU General Public License requirements will
+** be met: https://www.gnu.org/licenses/gpl-2.0.html and
+** https://www.gnu.org/licenses/gpl-3.0.html.
 **
 ** $QT_END_LICENSE$
 **
@@ -219,7 +222,8 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
     if (!menu)
         return false;
 
-    contextMenuData = data;
+    contextMenuData.update(data);
+    Q_EMIT q->experimental()->contextMenuDataChanged();
 
     // Populate our menu
     MenuItemHandler *item = 0;
@@ -248,7 +252,7 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
         ui()->addMenuItem(item, QQuickWebEngineView::tr("Copy"));
     }
 
-    if (!contextMenuData.linkText.isEmpty() && contextMenuData.linkUrl.isValid()) {
+    if (!contextMenuData.linkText().isEmpty() && contextMenuData.linkUrl().isValid()) {
         item = new MenuItemHandler(menu);
         QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::CopyLinkToClipboard); });
         ui()->addMenuItem(item, QQuickWebEngineView::tr("Copy Link URL"));
@@ -256,9 +260,9 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
         QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::DownloadLinkToDisk); });
         ui()->addMenuItem(item, QQuickWebEngineView::tr("Save Link"));
     }
-    if (contextMenuData.mediaUrl.isValid()) {
-        switch (contextMenuData.mediaType) {
-        case WebEngineContextMenuData::MediaTypeImage:
+    if (contextMenuData.mediaUrl().isValid()) {
+        switch (contextMenuData.mediaType()) {
+        case QQuickWebEngineContextMenuData::MediaTypeImage:
             item = new MenuItemHandler(menu);
             QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::CopyImageUrlToClipboard); });
             ui()->addMenuItem(item, QQuickWebEngineView::tr("Copy Image URL"));
@@ -269,11 +273,11 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
             QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::DownloadImageToDisk); });
             ui()->addMenuItem(item, QQuickWebEngineView::tr("Save Image"));
             break;
-        case WebEngineContextMenuData::MediaTypeCanvas:
+        case QQuickWebEngineContextMenuData::MediaTypeCanvas:
             Q_UNREACHABLE();    // mediaUrl is invalid for canvases
             break;
-        case WebEngineContextMenuData::MediaTypeAudio:
-        case WebEngineContextMenuData::MediaTypeVideo:
+        case QQuickWebEngineContextMenuData::MediaTypeAudio:
+        case QQuickWebEngineContextMenuData::MediaTypeVideo:
             item = new MenuItemHandler(menu);
             QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::CopyMediaUrlToClipboard); });
             ui()->addMenuItem(item, QQuickWebEngineView::tr("Copy Media URL"));
@@ -286,12 +290,12 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
             item = new MenuItemHandler(menu);
             QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::ToggleMediaLoop); });
             ui()->addMenuItem(item, QQuickWebEngineView::tr("Toggle Looping"));
-            if (contextMenuData.mediaFlags & WebEngineContextMenuData::MediaHasAudio) {
+            if (data.mediaFlags & WebEngineContextMenuData::MediaHasAudio) {
                 item = new MenuItemHandler(menu);
                 QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::ToggleMediaMute); });
                 ui()->addMenuItem(item, QQuickWebEngineView::tr("Toggle Mute"));
             }
-            if (contextMenuData.mediaFlags & WebEngineContextMenuData::MediaCanToggleControls) {
+            if (data.mediaFlags & WebEngineContextMenuData::MediaCanToggleControls) {
                 item = new MenuItemHandler(menu);
                 QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::ToggleMediaControls); });
                 ui()->addMenuItem(item, QQuickWebEngineView::tr("Toggle Media Controls"));
@@ -300,7 +304,7 @@ bool QQuickWebEngineViewPrivate::contextMenuRequested(const WebEngineContextMenu
         default:
             break;
         }
-    } else if (contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeCanvas) {
+    } else if (contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeCanvas) {
         item = new MenuItemHandler(menu);
         QObject::connect(item, &MenuItemHandler::triggered, [q] { q->triggerWebAction(QQuickWebEngineView::CopyImageToClipboard); });
         ui()->addMenuItem(item, QQuickWebEngineView::tr("Copy Image"));
@@ -1316,118 +1320,118 @@ void QQuickWebEngineView::triggerWebAction(WebAction action)
         d->adapter->pasteAndMatchStyle();
         break;
     case OpenLinkInThisWindow:
-        if (d->contextMenuData.linkUrl.isValid())
-            setUrl(d->contextMenuData.linkUrl);
+        if (d->contextMenuData.linkUrl().isValid())
+            setUrl(d->contextMenuData.linkUrl());
         break;
     case OpenLinkInNewWindow:
-        if (d->contextMenuData.linkUrl.isValid()) {
+        if (d->contextMenuData.linkUrl().isValid()) {
             QQuickWebEngineNewViewRequest request;
-            request.m_requestedUrl = d->contextMenuData.linkUrl;
+            request.m_requestedUrl = d->contextMenuData.linkUrl();
             request.m_isUserInitiated = true;
             request.m_destination = NewViewInWindow;
             Q_EMIT newViewRequested(&request);
         }
         break;
     case OpenLinkInNewTab:
-        if (d->contextMenuData.linkUrl.isValid()) {
+        if (d->contextMenuData.linkUrl().isValid()) {
             QQuickWebEngineNewViewRequest request;
-            request.m_requestedUrl = d->contextMenuData.linkUrl;
+            request.m_requestedUrl = d->contextMenuData.linkUrl();
             request.m_isUserInitiated = true;
             request.m_destination = NewViewInBackgroundTab;
             Q_EMIT newViewRequested(&request);
         }
         break;
     case CopyLinkToClipboard:
-        if (d->contextMenuData.linkUrl.isValid()) {
-            QString urlString = d->contextMenuData.linkUrl.toString(QUrl::FullyEncoded);
-            QString title = d->contextMenuData.linkText.toHtmlEscaped();
+        if (d->contextMenuData.linkUrl().isValid()) {
+            QString urlString = d->contextMenuData.linkUrl().toString(QUrl::FullyEncoded);
+            QString title = d->contextMenuData.linkText().toHtmlEscaped();
             QMimeData *data = new QMimeData();
             data->setText(urlString);
             QString html = QStringLiteral("<a href=\"") + urlString + QStringLiteral("\">") + title + QStringLiteral("</a>");
             data->setHtml(html);
-            data->setUrls(QList<QUrl>() << d->contextMenuData.linkUrl);
+            data->setUrls(QList<QUrl>() << d->contextMenuData.linkUrl());
             qApp->clipboard()->setMimeData(data);
         }
         break;
     case DownloadLinkToDisk:
-        if (d->contextMenuData.linkUrl.isValid())
-            d->adapter->download(d->contextMenuData.linkUrl, d->contextMenuData.suggestedFileName);
+        if (d->contextMenuData.linkUrl().isValid())
+            d->adapter->download(d->contextMenuData.linkUrl(), d->contextMenuData.d->suggestedFileName);
         break;
     case CopyImageToClipboard:
-        if (d->contextMenuData.hasImageContent &&
-                (d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeImage ||
-                 d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeCanvas))
+        if (d->contextMenuData.d->hasImageContent &&
+                (d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeImage ||
+                 d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeCanvas))
         {
-            d->adapter->copyImageAt(d->contextMenuData.pos);
+            d->adapter->copyImageAt(d->contextMenuData.position());
         }
         break;
     case CopyImageUrlToClipboard:
-        if (d->contextMenuData.mediaUrl.isValid() && d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeImage) {
-            QString urlString = d->contextMenuData.mediaUrl.toString(QUrl::FullyEncoded);
-            QString title = d->contextMenuData.linkText;
+        if (d->contextMenuData.mediaUrl().isValid() && d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeImage) {
+            QString urlString = d->contextMenuData.mediaUrl().toString(QUrl::FullyEncoded);
+            QString title = d->contextMenuData.linkText();
             if (!title.isEmpty())
                 title = QStringLiteral(" alt=\"%1\"").arg(title.toHtmlEscaped());
             QMimeData *data = new QMimeData();
             data->setText(urlString);
             QString html = QStringLiteral("<img src=\"") + urlString + QStringLiteral("\"") + title + QStringLiteral("></img>");
             data->setHtml(html);
-            data->setUrls(QList<QUrl>() << d->contextMenuData.mediaUrl);
+            data->setUrls(QList<QUrl>() << d->contextMenuData.mediaUrl());
             qApp->clipboard()->setMimeData(data);
         }
         break;
     case DownloadImageToDisk:
     case DownloadMediaToDisk:
-        if (d->contextMenuData.mediaUrl.isValid())
-            d->adapter->download(d->contextMenuData.mediaUrl, d->contextMenuData.suggestedFileName);
+        if (d->contextMenuData.mediaUrl().isValid())
+            d->adapter->download(d->contextMenuData.mediaUrl(), d->contextMenuData.d->suggestedFileName);
         break;
     case CopyMediaUrlToClipboard:
-        if (d->contextMenuData.mediaUrl.isValid() &&
-                (d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeAudio ||
-                 d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeVideo))
+        if (d->contextMenuData.mediaUrl().isValid() &&
+                (d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeAudio ||
+                 d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeVideo))
         {
-            QString urlString = d->contextMenuData.mediaUrl.toString(QUrl::FullyEncoded);
+            QString urlString = d->contextMenuData.mediaUrl().toString(QUrl::FullyEncoded);
             QMimeData *data = new QMimeData();
             data->setText(urlString);
-            if (d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeAudio)
+            if (d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeAudio)
                 data->setHtml(QStringLiteral("<audio src=\"") + urlString + QStringLiteral("\"></audio>"));
             else
                 data->setHtml(QStringLiteral("<video src=\"") + urlString + QStringLiteral("\"></video>"));
-            data->setUrls(QList<QUrl>() << d->contextMenuData.mediaUrl);
+            data->setUrls(QList<QUrl>() << d->contextMenuData.mediaUrl());
             qApp->clipboard()->setMimeData(data);
         }
         break;
     case ToggleMediaControls:
-        if (d->contextMenuData.mediaUrl.isValid() && d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaCanToggleControls) {
-            bool enable = !(d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaControls);
-            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.pos, WebContentsAdapter::MediaPlayerControls, enable);
+        if (d->contextMenuData.mediaUrl().isValid() && d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaCanToggleControls) {
+            bool enable = !(d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaControls);
+            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.position(), WebContentsAdapter::MediaPlayerControls, enable);
         }
         break;
     case ToggleMediaLoop:
-        if (d->contextMenuData.mediaUrl.isValid() &&
-                (d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeAudio ||
-                 d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeVideo))
+        if (d->contextMenuData.mediaUrl().isValid() &&
+                (d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeAudio ||
+                 d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeVideo))
         {
-            bool enable = !(d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaLoop);
-            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.pos, WebContentsAdapter::MediaPlayerLoop, enable);
+            bool enable = !(d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaLoop);
+            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.position(), WebContentsAdapter::MediaPlayerLoop, enable);
         }
         break;
     case ToggleMediaPlayPause:
-        if (d->contextMenuData.mediaUrl.isValid() &&
-                (d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeAudio ||
-                 d->contextMenuData.mediaType == WebEngineContextMenuData::MediaTypeVideo))
+        if (d->contextMenuData.mediaUrl().isValid() &&
+                (d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeAudio ||
+                 d->contextMenuData.mediaType() == QQuickWebEngineContextMenuData::MediaTypeVideo))
         {
-            bool enable = (d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaPaused);
-            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.pos, WebContentsAdapter::MediaPlayerPlay, enable);
+            bool enable = (d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaPaused);
+            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.position(), WebContentsAdapter::MediaPlayerPlay, enable);
         }
         break;
     case ToggleMediaMute:
-        if (d->contextMenuData.mediaUrl.isValid() && d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaHasAudio) {
-            bool enable = !(d->contextMenuData.mediaFlags & WebEngineContextMenuData::MediaMuted);
-            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.pos, WebContentsAdapter::MediaPlayerMute, enable);
+        if (d->contextMenuData.mediaUrl().isValid() && d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaHasAudio) {
+            bool enable = !(d->contextMenuData.d->mediaFlags & WebEngineContextMenuData::MediaMuted);
+            d->adapter->executeMediaPlayerActionAt(d->contextMenuData.position(), WebContentsAdapter::MediaPlayerMute, enable);
         }
         break;
     case InspectElement:
-        d->adapter->inspectElementAt(d->contextMenuData.pos);
+        d->adapter->inspectElementAt(d->contextMenuData.position());
         break;
     case ExitFullScreen:
         d->adapter->exitFullScreen();
@@ -1438,6 +1442,12 @@ void QQuickWebEngineView::triggerWebAction(WebAction action)
     default:
         Q_UNREACHABLE();
     }
+}
+
+const QQuickWebEngineContextMenuData *QQuickWebEngineViewExperimental::contextMenuData() const
+{
+    Q_D(const QQuickWebEngineView);
+    return &d->contextMenuData;
 }
 
 void QQuickWebEngineViewPrivate::userScripts_append(QQmlListProperty<QQuickWebEngineScript> *p, QQuickWebEngineScript *script)
