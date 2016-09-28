@@ -761,10 +761,8 @@ void QQuickWebEngineViewPrivate::adoptWebContents(WebContentsAdapter *webContent
 
     // This throws away the WebContentsAdapter that has been used until now.
     // All its states, particularly the loading URL, are replaced by the adopted WebContentsAdapter.
-    if(adapter) {
-        WebContentsAdapterOwner *adapterOwner = new WebContentsAdapterOwner(adapter->sharedFromThis());
-        adapterOwner->deleteLater();
-    }
+    WebContentsAdapterOwner *adapterOwner = new WebContentsAdapterOwner(adapter->sharedFromThis());
+    adapterOwner->deleteLater();
     adapter = webContents->sharedFromThis();
     adapter->initialize(this);
 
