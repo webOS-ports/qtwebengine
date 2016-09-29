@@ -59,7 +59,12 @@ void QuotaPermissionContextQt::RequestQuotaPermission(const StorageQuotaParams &
     if (params.storage_type != blink::mojom::StorageType::kPersistent) {
         // For now we only support requesting quota with this interface
         // for Persistent storage type.
-        callback.Run(QUOTA_PERMISSION_RESPONSE_DISALLOW);
+        if((params.origin_url.SchemeIsFile() && params.requested_size < 64*1024*1024) ||  // local URL: 64MB
+            params.requested_size < 5*1024*1024) {                                        // remote URL: 5MB
+            callback.Run(QUOTA_PERMISSION_RESPONSE_ALLOW);
+        } else {
+            callback.Run(QUOTA_PERMISSION_RESPONSE_DISALLOW);
+        }
         return;
     }
 
