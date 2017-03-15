@@ -118,7 +118,7 @@ contains(QT_ARCH, "mips") {
 
 host_build {
     gn_args += custom_toolchain=\"$$QTWEBENGINE_OUT_ROOT/src/toolchain:host\"
-    GN_HOST_CPU = $$gnArch($$QT_ARCH)
+    GN_HOST_CPU = $$gnArch($$QMAKE_HOST.arch)
     gn_args += host_cpu=\"$$GN_HOST_CPU\"
     # Don't bother trying to use system libraries in this case
     gn_args += use_glib=false
