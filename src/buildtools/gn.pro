@@ -19,8 +19,8 @@ build_pass|!debug_and_release {
             gn_bootstrap = $$system_path($$absolute_path(gn/build/gen.py, $$src_3rd_party_dir))
 
             gn_gen_args = --no-last-commit-position --out-path $$out_path \
-                          --cc \"$$which($$QMAKE_CC)\" --cxx \"$$which($$QMAKE_CXX)\" \
-                          --ld \"$$which($$QMAKE_LINK)\"
+                          --cc \"$$which($$CC_host)\" --cxx \"$$which($$CXX_host)\" \
+                          --ld \"$$which($$CXX_host)\" --ar \"$$which(ar)\"
 
             msvc:!clang_cl: gn_gen_args += --use-lto
 
