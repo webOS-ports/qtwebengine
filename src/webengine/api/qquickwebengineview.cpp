@@ -921,6 +921,26 @@ void QQuickWebEngineViewPrivate::setProfile(QQuickWebEngineProfile *profile)
     }
 }
 
+qreal QQuickWebEngineView::devicePixelRatio() const
+{
+    Q_D(const QQuickWebEngineView);
+    return d->devicePixelRatio;
+}
+
+void QQuickWebEngineView::setDevicePixelRatio(qreal devicePixelRatio)
+{
+    Q_D(QQuickWebEngineView);
+    // Valid range is [1, inf)
+    devicePixelRatio = qMax(qreal(1.0), devicePixelRatio);
+    if (d->devicePixelRatio == devicePixelRatio)
+        return;
+    d->m_dpiScale = devicePixelRatio;
+    if (!d->adapter)
+        return;
+    d->adapter->dpiScaleChanged();
+    Q_EMIT devicePixelRatioChanged();
+}
+
 #ifdef ENABLE_QML_TESTSUPPORT_API
 QQuickWebEngineTestSupport *QQuickWebEngineView::testSupport() const
 {
