@@ -1118,6 +1118,22 @@ void QQuickWebEngineView::setDevicePixelRatio(qreal devicePixelRatio)
     Q_EMIT devicePixelRatioChanged();
 }
 
+void QQuickWebEngineView::setExtraContextMenuEntriesComponent(QQmlComponent *contextMenuExtras)
+{
+    Q_D(QQuickWebEngineView);
+    if (d->contextMenuExtraItems == contextMenuExtras)
+        return;
+    d->contextMenuExtraItems = contextMenuExtras;
+    Q_EMIT extraContextMenuEntriesComponentChanged();
+}
+
+QQmlComponent *QQuickWebEngineView::extraContextMenuEntriesComponent() const
+{
+    Q_D(const QQuickWebEngineView);
+    return d->contextMenuExtraItems;
+}
+
+
 #if QT_CONFIG(webengine_testsupport)
 QQuickWebEngineTestSupport *QQuickWebEngineView::testSupport() const
 {
