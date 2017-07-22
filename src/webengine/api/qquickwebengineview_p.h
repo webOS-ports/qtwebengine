@@ -129,6 +129,7 @@ class Q_WEBENGINE_PRIVATE_EXPORT QQuickWebEngineView : public QQuickItem {
     Q_PROPERTY(bool audioMuted READ isAudioMuted WRITE setAudioMuted NOTIFY audioMutedChanged FINAL REVISION 3)
     Q_PROPERTY(bool recentlyAudible READ recentlyAudible NOTIFY recentlyAudibleChanged FINAL REVISION 3)
     Q_PROPERTY(uint webChannelWorld READ webChannelWorld WRITE setWebChannelWorld NOTIFY webChannelWorldChanged REVISION 3 FINAL)
+    Q_PROPERTY(QQmlComponent *extraContextMenuEntriesComponent READ extraContextMenuEntriesComponent WRITE setExtraContextMenuEntriesComponent NOTIFY extraContextMenuEntriesComponentChanged REVISION 4)
 
     Q_PROPERTY(QQuickWebEngineView *inspectedView READ inspectedView WRITE setInspectedView NOTIFY inspectedViewChanged REVISION 7 FINAL)
     Q_PROPERTY(QQuickWebEngineView *devToolsView READ devToolsView WRITE setDevToolsView NOTIFY devToolsViewChanged REVISION 7 FINAL)
@@ -478,6 +479,9 @@ public:
     void setAudioMuted(bool muted);
     bool recentlyAudible() const;
 
+    QQmlComponent *extraContextMenuEntriesComponent() const;
+    void setExtraContextMenuEntriesComponent(QQmlComponent *);
+
 #if QT_CONFIG(webengine_testsupport)
     QQuickWebEngineTestSupport *testSupport() const;
     void setTestSupport(QQuickWebEngineTestSupport *testSupport);
@@ -544,6 +548,7 @@ Q_SIGNALS:
     Q_REVISION(4) void colorDialogRequested(QQuickWebEngineColorDialogRequest *request);
     Q_REVISION(4) void fileDialogRequested(QQuickWebEngineFileDialogRequest *request);
     Q_REVISION(4) void formValidationMessageRequested(QQuickWebEngineFormValidationMessageRequest *request);
+    Q_REVISION(4) void extraContextMenuEntriesComponentChanged();
     Q_REVISION(5) void pdfPrintingFinished(const QString &filePath, bool success);
     Q_REVISION(7) void quotaRequested(const QWebEngineQuotaRequest &request);
     Q_REVISION(7) void geometryChangeRequested(const QRect &geometry, const QRect &frameGeometry);
