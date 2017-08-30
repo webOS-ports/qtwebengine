@@ -24,6 +24,12 @@ defineReplace(filter_flag_values) {
         equals(value_to_check, "$(EXPORT_QMAKE_XARCH_CFLAGS)"): return("")
     }
 
+    contains(value_to_check, ".*-g -feliminate-unused-debug-types.*") {
+        # in debug mode, eliminate this spurious value, which contains spaces and will not be interpreted
+        # correctly by gn.
+        return("")
+    }
+
     return($$value_to_check)
 }
 
