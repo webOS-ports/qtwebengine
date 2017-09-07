@@ -363,6 +363,17 @@ WebEngineContext::WebEngineContext()
 
     // The Mojo local-storage is currently pretty broken and saves in $$PWD/Local\ Storage
     parsedCommandLine->AppendSwitch(switches::kDisableMojoLocalStorage);
+    //// LuneOS specific
+    // Disable some sandbox capabilities, which are incompatible with our (old) kernels
+    parsedCommandLine->AppendSwitch(switches::kDisableNamespaceSandbox);
+    parsedCommandLine->AppendSwitch(service_manager::switches::kDisableSeccompFilterSandbox);
+    // Disable OpenGL ES 3, as Qt's shared context uses OpenGL ES 2
+    parsedCommandLine->AppendSwitch(switches::kDisableES3GLContext);
+    // Add switches to enable flash/widevine plugins
+    parsedCommandLine->AppendSwitchASCII("ppapi-flash-path", "/usr/lib/chromium/libpepflashplayer.so");
+    parsedCommandLine->AppendSwitchASCII("ppapi-flash-version", "26.0.0.151");
+    parsedCommandLine->AppendSwitchASCII(switches::kRegisterPepperPlugins, "/usr/lib/chromium/libwidevinecdmadapter.so;application/x-ppapi-widevine-cdm");
+    //// End of LuneOS specific
 
 #if defined(Q_OS_MACOS)
     // Accelerated decoding currently does not work on macOS due to issues with OpenGL Rectangle
