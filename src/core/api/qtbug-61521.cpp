@@ -74,10 +74,6 @@ SHIM_SYMBOL_VERSION(valloc);
 void* __valloc(size_t size)
     SHIM_ALIAS_SYMBOL(ShimValloc);
 
-SHIM_SYMBOL_VERSION(pvalloc);
-void* __pvalloc(size_t size)
-    SHIM_ALIAS_SYMBOL(ShimPvalloc);
-
 SHIM_SYMBOL_VERSION(posix_memalign);
 int __posix_memalign(void** r, size_t a, size_t s)
     SHIM_ALIAS_SYMBOL(ShimPosixMemalign);
@@ -108,10 +104,6 @@ SHIM_HIDDEN void* ShimMemalign(size_t align, size_t s) {
 
 SHIM_HIDDEN void* ShimValloc(size_t size) {
     return  valloc(size);
-}
-
-SHIM_HIDDEN void* ShimPvalloc(size_t size) {
-    return pvalloc(size);
 }
 
 SHIM_HIDDEN int ShimPosixMemalign(void** r, size_t a, size_t s) {
