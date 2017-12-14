@@ -5,7 +5,7 @@ include($${QTWEBENGINE_ROOT}/src/buildtools/config/linking.pri)
 
 api_library_name = qtwebenginecoreapi$$qtPlatformTargetSuffix()
 api_library_path = $$OUT_PWD/api/$$getConfigDir()
-LIBS_PRIVATE += -L$$api_library_path
+LIBS_PRIVATE += -L$$api_library_path -lexecinfo
 CONFIG *= no_smart_library_merge
 osx {
     LIBS_PRIVATE += -Wl,-force_load,$${api_library_path}$${QMAKE_DIR_SEP}lib$${api_library_name}.a
