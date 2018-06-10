@@ -159,7 +159,7 @@ std::unique_ptr<base::ListValue> GetFontList_SlowBlocking()
     return std::move(font_list);
 }
 
-#if BUILDFLAG(ENABLE_PLUGINS)
+#if BUILDFLAG(ENABLE_PLUGINS) && !defined(USE_OZONE)
 // content/browser/renderer_host/pepper/pepper_truetype_font_list.h
 void GetFontFamilies_SlowBlocking(std::vector<std::string> *font_families)
 {
