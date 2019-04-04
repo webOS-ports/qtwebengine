@@ -82,6 +82,7 @@ private:
 
     // qtwebchannel::mojom::WebChannelTransportHost
     void DispatchWebChannelMessage(const std::vector<uint8_t> &binaryJson) override;
+    void DispatchWebChannelMessageSync(const std::vector<uint8_t> &binaryJson, DispatchWebChannelMessageSyncCallback callback) override;
 
     // Empty only during construction/destruction. Synchronized to all the
     // WebChannelIPCTransports/RenderFrames in the observed WebContents.
@@ -90,6 +91,9 @@ private:
     std::map<content::RenderFrameHost *,
              mojo::AssociatedRemote<qtwebchannel::mojom::WebChannelTransportRender>>
             m_renderFrames;
+
+    // Sync call management
+    std::vector<uint8_t> *m_waitingJsonReply;
 };
 
 } // namespace

@@ -70,7 +70,9 @@ public:
 
 private:
     WebChannelTransport() {}
-    void NativeQtSendMessage(gin::Arguments *args);
+    void NativeQtSendMessage(gin::Arguments *args, bool bSyncCall);
+    void NativeQtSendMessageASync(gin::Arguments *args);
+    void NativeQtSendMessageSync(gin::Arguments *args);
 
     // gin::WrappableBase
     gin::ObjectTemplateBuilder GetObjectTemplateBuilder(v8::Isolate *isolate) override;
@@ -130,7 +132,17 @@ void WebChannelTransport::Uninstall(blink::WebLocalFrame *frame, uint worldId)
     Q_UNUSED(whocares);
 }
 
-void WebChannelTransport::NativeQtSendMessage(gin::Arguments *args)
+void WebChannelTransport::NativeQtSendMessageASync(gin::Arguments *args)
+{
+    NativeQtSendMessage(args, false);
+}
+
+void WebChannelTransport::NativeQtSendMessageSync(gin::Arguments *args)
+{
+    NativeQtSendMessage(args, true);
+}
+
+void WebChannelTransport::NativeQtSendMessage(gin::Arguments *args, bool bSyncCall)
 {
     blink::WebLocalFrame *frame = blink::WebLocalFrame::FrameForCurrentContext();
     if (!frame || !frame->View())
@@ -173,13 +185,38 @@ void WebChannelTransport::NativeQtSendMessage(gin::Arguments *args)
     }
     DCHECK(renderFrame == m_renderFrame);
 
-    m_remote->DispatchWebChannelMessage(std::vector<uint8_t>(rawData, rawData + size));
+    if(bSyncCall) {
+        std::vector<uint8_t> replyMessage;
+        m_remote->DispatchWebChannelMessageSync(std::vector<uint8_t>(rawData, rawData + size), &replyMessage);
+
+        QJsonDocument docReply = QJsonDocument::fromRawData(reinterpret_cast<const char *>(replyMessage.data()),
+                                                       replyMessage.size(), QJsonDocument::BypassValidation);
+
+        QByteArray jsonReply = docReply.toJson(QJsonDocument::Compact);
+
+        v8::Isolate* isolate = args->isolate();
+
+        v8::Local<v8::Object> replyObject = v8::Object::New(isolate);
+        v8::Local<v8::Context> context;
+        //if (worldId == 0)
+            context = frame->MainWorldScriptContext();
+        //else
+        //    context = frame->IsolatedWorldScriptContext(worldId);
+        replyObject->Set(context, v8::String::NewFromUtf8(isolate, "data").ToLocalChecked(),
+                      v8::String::NewFromUtf8(isolate, jsonReply.constData(), v8::NewStringType::kNormal, jsonReply.size()).ToLocalChecked());
+
+        args->Return(replyObject);
+    }
+    else {
+        m_remote->DispatchWebChannelMessage(std::vector<uint8_t>(rawData, rawData + size));
+    }
 }
 
 gin::ObjectTemplateBuilder WebChannelTransport::GetObjectTemplateBuilder(v8::Isolate *isolate)
 {
-    return gin::Wrappable<WebChannelTransport>::GetObjectTemplateBuilder(isolate).SetMethod(
-            "send", &WebChannelTransport::NativeQtSendMessage);
+    return gin::Wrappable<WebChannelTransport>::GetObjectTemplateBuilder(isolate)
+        .SetMethod("send", &WebChannelTransport::NativeQtSendMessageASync)
+        .SetMethod("sendSync", &WebChannelTransport::NativeQtSendMessageSync);
 }
 
 WebChannelIPCTransport::WebChannelIPCTransport(content::RenderFrame *renderFrame)
