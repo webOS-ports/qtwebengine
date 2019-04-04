@@ -77,6 +77,7 @@ WebChannelIPCTransportHost::WebChannelIPCTransportHost(content::WebContents *con
     , content::WebContentsObserver(contents)
     , m_worldId(worldId)
     , m_binding(contents, this)
+    , m_waitingJsonReply(0)
 {
     for (content::RenderFrameHost *frame : contents->GetAllFrames())
         setWorldId(frame, worldId);
@@ -97,11 +98,16 @@ void WebChannelIPCTransportHost::sendMessage(const QJsonObject &message)
     QJsonDocument doc(message);
     int size = 0;
     const char *rawData = doc.rawData(&size);
-    content::RenderFrameHost *frame = web_contents()->GetMainFrame();
-    qtwebchannel::mojom::WebChannelTransportRenderAssociatedPtr webChannelTransport;
-    frame->GetRemoteAssociatedInterfaces()->GetInterface(&webChannelTransport);
-    qCDebug(log).nospace() << "sending webchannel message to " << frame << ": " << doc;
-    webChannelTransport->DispatchWebChannelMessage(std::vector<uint8_t>(rawData, rawData + size), m_worldId);
+    if(m_waitingJsonReply) {
+         *m_waitingJsonReply = std::vector<uint8_t>(rawData, rawData + size);
+    }
+    else {
+        content::RenderFrameHost *frame = web_contents()->GetMainFrame();
+        qtwebchannel::mojom::WebChannelTransportRenderAssociatedPtr webChannelTransport;
+        frame->GetRemoteAssociatedInterfaces()->GetInterface(&webChannelTransport);
+        qCDebug(log).nospace() << "sending webchannel message to " << frame << ": " << doc;
+        webChannelTransport->DispatchWebChannelMessage(std::vector<uint8_t>(rawData, rawData + size), m_worldId);
+    }
 }
 
 void WebChannelIPCTransportHost::setWorldId(uint32_t worldId)
@@ -156,6 +162,16 @@ void WebChannelIPCTransportHost::DispatchWebChannelMessage(const std::vector<uin
 
     qCDebug(log).nospace() << "received webchannel message from " << frame << ": " << doc;
     Q_EMIT messageReceived(doc.object(), this);
+}
+
+void WebChannelIPCTransportHost::DispatchWebChannelMessageSync(const std::vector<uint8_t> &binaryJson, DispatchWebChannelMessageSyncCallback callback)
+{
+    std::vector<uint8_t> localJson;
+    m_waitingJsonReply = &localJson;
+    DispatchWebChannelMessage(binaryJson);
+
+    std::move(callback).Run(std::move(localJson));
+    m_waitingJsonReply = 0;
 }
 
 void WebChannelIPCTransportHost::RenderFrameCreated(content::RenderFrameHost *frame)
