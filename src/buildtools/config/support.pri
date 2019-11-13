@@ -89,11 +89,6 @@ defineTest(qtwebengine_checkErrorForLinux) {
         return(false)
     }
 
-    !qtConfig(webengine-system-glibc) {
-        qtwebengine_skipBuild("A suitable version >= 2.27 of libc required to build QtWebEngine could not be found.")
-        return(false)
-    }
-
     !qtConfig(webengine-system-khr) {
         qtwebengine_skipBuild("Khronos development headers required to build QtWebEngine are missing (see mesa/libegl1-mesa-dev)")
         return(false)
