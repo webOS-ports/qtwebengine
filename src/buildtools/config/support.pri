@@ -191,10 +191,6 @@ defineTest(qtwebengine_checkForHostPkgCfg) {
 
 defineTest(qtwebengine_checkForGlibc) {
     module = $$1
-    !qtConfig(webengine-system-glibc) {
-        qtwebengine_skipBuild("A suitable version >= 2.27 of libc required to build $${module} could not be found.")
-        return(false)
-    }
     return(true)
 }
 
