@@ -255,6 +255,11 @@ private:
 static content::ScreenInfo screenInfoFromQScreen(QScreen *screen)
 {
     content::ScreenInfo r;
+    
+    if (!screen) {
+        screen = qGuiApp->primaryScreen();
+    }
+    
     if (screen) {
         r.device_scale_factor = screen->devicePixelRatio();
         r.depth_per_component = 8;
